@@ -1,19 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/blue"
+    android:orientation="vertical"
+    android:paddingBottom="28dp"
 
-    <TextView
-        android:layout_width="wrap_content"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="@dimen/tf_indentation">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/f_indentation"
+            android:layout_marginTop="@dimen/f_indentation"
+            android:layout_marginEnd="52dp"
+            android:layout_marginBottom="@dimen/f_indentation">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tw_indentation"
+                android:layout_marginTop="@dimen/t_indentation"
+                android:layout_marginBottom="@dimen/tw_indentation"
+                android:gravity="center_vertical"
+                android:text="@string/plm_text"
+                android:textColor="@color/white"
+                android:textSize="@dimen/medium" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_search"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/sx_indentation"
+        android:layout_marginStart="@dimen/sx_indentation"
+        android:layout_marginBottom="@dimen/button_indentation"
+        android:layout_weight="500"
+        android:backgroundTint="@color/white"
+        android:text="@string/search"
+        android:textColor="@color/black"
+        android:textSize="@dimen/medium"
+        app:cornerRadius="@dimen/corner_radius"
+        app:icon="@drawable/search"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/icon_padding"
+        app:iconTint="@color/black" />
+
+    <Button
+        android:id="@+id/btn_media"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/medio"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight="500"
+        android:layout_marginEnd="@dimen/sx_indentation"
+        android:layout_marginStart="@dimen/sx_indentation"
+        android:textSize="@dimen/medium"
+        android:layout_marginBottom="@dimen/button_indentation"
+        app:cornerRadius="@dimen/corner_radius"
+        app:icon="@drawable/musicicon"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/icon_padding"
+        app:iconTint="@color/black"/>
+    <Button
+        android:id="@+id/btn_settings"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight="500"
+        android:textSize="@dimen/medium"
+        android:layout_marginEnd="@dimen/sx_indentation"
+        android:layout_marginStart="@dimen/sx_indentation"
+        app:cornerRadius="@dimen/corner_radius"
+        app:icon="@drawable/settings"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/icon_padding"
+        app:iconTint="@color/black"
+        />
+
+
+</LinearLayout>

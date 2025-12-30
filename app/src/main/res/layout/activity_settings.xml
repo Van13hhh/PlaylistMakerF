@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:ignore="ExtraText">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/f_indentation"
+            android:layout_marginTop="@dimen/f_indentation"
+            android:layout_marginEnd="@dimen/ft_indentation"
+            android:layout_marginBottom="@dimen/f_indentation">
+
+            <Button
+                android:id="@+id/back_to_main_menu"
+                android:layout_width="@dimen/fe_indentation"
+                android:layout_height="@dimen/fe_indentation"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:paddingStart="@dimen/tw_indentation"
+                android:paddingTop="@dimen/tw_indentation"
+                android:paddingEnd="@dimen/tw_indentation"
+                android:paddingBottom="@dimen/tw_indentation"
+                app:icon="@drawable/left_arrow"
+                app:iconTint="@color/black_settings"
+
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/fe_indentation">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginStart="@dimen/tw_indentation"
+                        android:layout_marginTop="@dimen/t_indentation"
+                        android:layout_marginEnd="84dp"
+                        android:layout_marginBottom="@dimen/tw_indentation"
+                        android:gravity="center_vertical"
+                        android:text="@string/settings"
+                        android:textColor="@color/black_settings"
+                        android:textSize="@dimen/medium" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/tf_indentation">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/sx_indentation"
+            android:layout_marginTop="@dimen/to_indentation"
+            android:layout_marginBottom="@dimen/to_indentation"
+            android:layout_marginEnd="@dimen/ff_indentation"
+            android:text="@string/dark_theme"
+            android:textColor="@color/black_settings_text"
+            android:textSize="@dimen/settings_text" />
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/t_indentation"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="11dp"
+            tools:ignore="TouchTargetSizeCheck" />
+    </FrameLayout>
+
+    android:src="@drawable/switch__1"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/sx_indentation"
+            android:layout_marginTop="@dimen/to_indentation"
+            android:layout_marginBottom="@dimen/to_indentation"
+            android:layout_marginEnd="@dimen/ff_indentation"
+            android:text="@string/s_app"
+            android:textColor="@color/black_settings_text"
+            android:textSize="@dimen/settings_text" />
+
+        <ImageView
+            android:layout_width="@dimen/tf_indentation"
+            android:layout_height="@dimen/tf_indentation"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/n_indentation"
+            android:layout_marginEnd="@dimen/tw_indentation"
+            android:src="@drawable/share" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/sx_indentation"
+            android:layout_marginLeft="@dimen/sx_indentation"
+            android:layout_marginTop="@dimen/n_indentation"
+            android:layout_marginEnd="@dimen/ff_indentation"
+            android:layout_marginBottom="18dp"
+            android:text="@string/t_support"
+            android:textColor="@color/black_settings_text"
+            android:textSize="@dimen/settings_text" />
+
+        <ImageView
+            android:layout_width="@dimen/tf_indentation"
+            android:layout_height="@dimen/tf_indentation"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/n_indentation"
+            android:layout_marginEnd="@dimen/tw_indentation"
+            android:src="@drawable/support" />
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginEnd="@dimen/ff_indentation"
+            android:layout_marginLeft="@dimen/sx_indentation"
+            android:layout_marginTop="@dimen/to_indentation"
+            android:layout_marginBottom="@dimen/to_indentation"
+            android:layout_marginStart="@dimen/sx_indentation"
+            android:text="@string/u_agreement"
+            android:textColor="@color/black_settings_text"
+            android:textSize="@dimen/settings_text" />
+
+        <ImageView
+            android:layout_width="@dimen/tf_indentation"
+            android:layout_height="@dimen/tf_indentation"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/n_indentation"
+            android:layout_marginEnd="@dimen/tw_indentation"
+            android:src="@drawable/arrow_forward" />
+    </FrameLayout>
+
+
+
+</LinearLayout>
+
+
