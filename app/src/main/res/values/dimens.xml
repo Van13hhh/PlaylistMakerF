@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="medium">22sp</dimen>
+    <dimen name="corner_radius">16dp</dimen>
+    <dimen name="sx_indentation">16dp</dimen>
+    <dimen name="t_indentation">10dp</dimen>
+    <dimen name="f_indentation">4dp</dimen>
+    <dimen name="tw_indentation">12dp</dimen>
+    <dimen name="n_indentation">19dp</dimen>
+    <dimen name="fe_indentation">48dp</dimen>
+    <dimen name="tf_indentation">24dp</dimen>
+    <dimen name="ff_indentation">44dp</dimen>
+    <dimen name="to_indentation">21dp</dimen>
+    <dimen name="ft_indentation">24dp</dimen>
+    <dimen name="button_indentation">16dp</dimen>
+    <dimen name="settings_text">16sp</dimen>
+    <dimen name="icon_padding">8dp</dimen>
+</resources>
