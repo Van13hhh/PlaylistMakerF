@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Button_ma_style">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/sx_indentation</item>
+        <item name="android:layout_marginStart">@dimen/sx_indentation</item>
+        <item name="android:layout_marginBottom">@dimen/sx_indentation</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_weight">500</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/medium</item>
+        <item name="cornerRadius">@dimen/corner_radius</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/icon_padding</item>
+        <item name="iconTint">@color/black</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+    </style>
+
+    <style name="TextView_sa_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:layout_marginStart">@dimen/sx_indentation</item>
+        <item name="android:layout_marginTop">@dimen/to_indentation</item>
+        <item name="android:layout_marginBottom">@dimen/to_indentation</item>
+        <item name="android:layout_marginEnd">@dimen/ff_indentation</item>
+        <item name="android:textColor">@color/black_settings_text</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/settings_text</item>
+    </style>
+
+    <style name="FrameLayout_sa_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+</resources>
