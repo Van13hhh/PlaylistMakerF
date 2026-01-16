@@ -8,4 +8,8 @@
     <string name="s_app" translatable="false">"Поделится приложением"</string>
     <string name="t_support" translatable="false">"Написать в поддержку"</string>
     <string name="u_agreement" translatable="false">"Пользовательское соглашение"</string>
+    <string name="url_yandex" translatable="false">"https://yandex.ru/legal/practicum_offer/ru"</string>
+    <string name="url_share" translatable="false">"https://practicum.yandex.ru/android-developer"</string>
+    <string name="theme" translatable="false">"Сообщение разработчикам и разработчицам приложения Playlist Maker"</string>
+    <string name="message" translatable="false">"Спасибо разработчикам и разработчицам за крутое приложение!"</string>
 </resources>

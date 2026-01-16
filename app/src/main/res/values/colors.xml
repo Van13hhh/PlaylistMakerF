@@ -15,4 +15,7 @@
     <color name="text_on_day_setting_activity">#000000</color>
     <color name="switch_line">#9FBBF3</color>
     <color name="settings_button">#AEAFB4</color>
+    <color name="YP_text_Gray">#818C99</color>
+    <color name="YP_text_LightGray">#E6E8EB</color>
+    <color name="YPBlack">#1A1B22</color>
 </resources>

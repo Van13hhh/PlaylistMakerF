@@ -62,6 +62,7 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/settings_frameL1"
         style="@style/FrameLayout_sa_style"
         android:layout_marginTop="@dimen/tf_indentation">
 
@@ -78,11 +79,13 @@
             android:layout_gravity="end"
             android:layout_marginTop="@dimen/t_indentation"
             android:layout_marginEnd="6dp"
-            android:layout_marginBottom="11dp" />
+            android:layout_marginBottom="11dp"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </FrameLayout>
 
     <FrameLayout
-        style="@style/FrameLayout_sa_style">
+        style="@style/FrameLayout_sa_style"
+        android:id="@+id/settings_frameL2">
 
         <TextView
             android:text="@string/s_app"
@@ -103,7 +106,8 @@
     </FrameLayout>
 
     <FrameLayout
-        style="@style/FrameLayout_sa_style">
+        style="@style/FrameLayout_sa_style"
+        android:id="@+id/settings_frameL3">
 
         <TextView
             style="@style/TextView_sa_style"
@@ -122,7 +126,8 @@
             />
     </FrameLayout>
     <FrameLayout
-        style="@style/FrameLayout_sa_style">
+        style="@style/FrameLayout_sa_style"
+        android:id="@+id/settings_frameL4">
 
         <TextView
             style="@style/TextView_sa_style"

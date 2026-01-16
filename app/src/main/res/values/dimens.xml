@@ -15,4 +15,5 @@
     <dimen name="button_indentation">16dp</dimen>
     <dimen name="settings_text">16sp</dimen>
     <dimen name="icon_padding">8dp</dimen>
+    <dimen name="e_padding">8dp</dimen>
 </resources>

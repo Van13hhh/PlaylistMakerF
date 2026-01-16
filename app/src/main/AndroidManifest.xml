@@ -15,11 +15,6 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker.Settings">
-            <intent-filter>
-                <action android:name="android.intent.action.Settings" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".SearchActivity"

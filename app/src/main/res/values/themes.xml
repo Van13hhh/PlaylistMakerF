@@ -33,4 +33,10 @@
         <item name="android:paddingEnd">4dp</item>
         <item name="iconTint">@color/settings_button</item>
     </style>
+    <style name="Theme.PlaylistMaker.Search" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/YPBlack</item>
+        <item name="colorSecondary">@color/YP_text_LightGray</item>
+        <item name="colorOnSecondary">@color/YP_text_Gray</item>
+    </style>
 </resources>
