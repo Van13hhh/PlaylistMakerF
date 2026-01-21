@@ -12,4 +12,5 @@
     <string name="url_share" translatable="false">"https://practicum.yandex.ru/android-developer"</string>
     <string name="theme" translatable="false">"Сообщение разработчикам и разработчицам приложения Playlist Maker"</string>
     <string name="message" translatable="false">"Спасибо разработчикам и разработчицам за крутое приложение!"</string>
+    <string name="mail" translatable="false">"novikovivan06@gmail.com"</string>
 </resources>
