@@ -1,0 +1,51 @@
+[33mcommit be569111ff5cc31d9729743a9db4b5fbeea7e133[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev[m[33m)[m
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Sun Jan 4 13:15:25 2026 +0300
+
+    styles
+
+[33mcommit d8459a36a58a67a813fbbaf0c5282e103bfd26db[m[33m ([m[1;31morigin/dev[m[33m)[m
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Sat Jan 3 14:21:18 2026 +0300
+
+    styles
+
+[33mcommit d104ed8175f6d2cdb2ae1f9534376807d76a456e[m
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Tue Dec 30 14:49:02 2025 +0300
+
+    5
+
+[33mcommit 0a952641db22773a627b7cf5838a312af0ad8315[m
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Tue Dec 30 14:46:11 2025 +0300
+
+    4
+
+[33mcommit 4d24f76b799bea13cf231b3a4bcd43e271b3a971[m
+Merge: 25e3b5c b3e4478
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Tue Dec 30 09:37:00 2025 +0300
+
+    Merge remote-tracking branch 'origin/dev' into dev
+    
+    # Conflicts:
+    #       app/src/main/java/com/example/playlistmaker/MainActivity.kt
+
+[33mcommit 25e3b5c0c87c4f1510e3cd6462c2102f43f8aea3[m
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Tue Dec 30 09:27:37 2025 +0300
+
+    3
+
+[33mcommit b3e44786db03d96084812eb802217dcbf050b23d[m
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Tue Dec 30 09:27:37 2025 +0300
+
+    2
+
+[33mcommit 37cedb69fad02bb8580197699087853c1723540b[m
+Author: Van13hhh <novikovivan06@gmail.com>
+Date:   Tue Dec 30 09:23:28 2025 +0300
+
+    1

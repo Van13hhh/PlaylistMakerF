@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/blue"
+    android:theme="@style/Theme.PlaylistMaker.Main"
+    android:background="?attr/colorPrimary"
     android:orientation="vertical"
-    android:paddingBottom="28dp"
+
 
     >
 
@@ -28,6 +29,7 @@
                 android:layout_marginStart="@dimen/tw_indentation"
                 android:layout_marginTop="@dimen/t_indentation"
                 android:layout_marginBottom="@dimen/tw_indentation"
+                android:fontFamily="@font/ys_display_medium"
                 android:gravity="center_vertical"
                 android:text="@string/plm_text"
                 android:textColor="@color/white"
@@ -37,62 +39,22 @@
 
     <Button
         android:id="@+id/btn_search"
-        android:foreground="?attr/selectableItemBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/sx_indentation"
-        android:layout_marginStart="@dimen/sx_indentation"
-        android:layout_marginBottom="@dimen/button_indentation"
-        android:layout_weight="500"
-        android:backgroundTint="@color/white"
+        style="@style/Button_ma_style"
         android:text="@string/search"
-        android:textColor="@color/black"
-        android:textAllCaps="false"
-        android:textSize="@dimen/medium"
-        app:cornerRadius="@dimen/corner_radius"
-        app:icon="@drawable/search"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/ic_search_19x19" />
 
     <Button
         android:id="@+id/btn_media"
-        android:foreground="?attr/selectableItemBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/Button_ma_style"
         android:text="@string/my_text_lowercase"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/black"
-        android:layout_weight="500"
-        android:layout_marginEnd="@dimen/sx_indentation"
-        android:textAllCaps="false"
-        android:layout_marginStart="@dimen/sx_indentation"
-        android:textSize="@dimen/medium"
-        android:layout_marginBottom="@dimen/button_indentation"
-        app:cornerRadius="@dimen/corner_radius"
-        app:icon="@drawable/musicicon"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding"
-        app:iconTint="@color/black"/>
+        app:icon="@drawable/ic_music_icon_20x20" />
+
     <Button
         android:id="@+id/btn_settings"
-        android:foreground="?attr/selectableItemBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/Button_ma_style"
+        android:layout_marginBottom="28dp"
         android:text="@string/settings"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/black"
-        android:layout_weight="500"
-        android:textAllCaps="false"
-        android:textSize="@dimen/medium"
-        android:layout_marginEnd="@dimen/sx_indentation"
-        android:layout_marginStart="@dimen/sx_indentation"
-        app:cornerRadius="@dimen/corner_radius"
-        app:icon="@drawable/settings"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding"
-        app:iconTint="@color/black"
-        />
+        app:icon="@drawable/ic_settings_19x20" />
 
 
 </LinearLayout>

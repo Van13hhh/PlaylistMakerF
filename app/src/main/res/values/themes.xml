@@ -2,8 +2,41 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- <item name="colorPrimary">@color/my_light_primary> -->
     </style>
 
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/text_on_day_setting_activity</item>
+    </style>
+    <style name="Theme.PlaylistMaker.Main" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+    <style name="Theme.PlaylistMaker.Settings" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/switch_color</item>
+        <item name="colorOnSecondary">@color/background_setting_activity</item>
+    </style>
+
+    <style name="Button_settings" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:layout_marginTop">@dimen/n_indentation</item>
+        <item name="android:layout_marginEnd">@dimen/tw_indentation</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="iconTint">@color/settings_button</item>
+    </style>
+    <style name="Theme.PlaylistMaker.Search" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/YPBlack</item>
+        <item name="colorSecondary">@color/YP_text_LightGray</item>
+        <item name="colorOnSecondary">@color/YP_text_Gray</item>
+    </style>
 </resources>

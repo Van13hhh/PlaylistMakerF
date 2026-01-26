@@ -2,6 +2,35 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/background_setting_activity</item>
     </style>
-</resources>
+    <style name="Theme.PlaylistMaker.Main" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/background_setting_activity</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker.Settings" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/background_setting_activity</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/blue</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+    </style>
+    <style name="Button_settings" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:layout_marginTop">@dimen/n_indentation</item>
+        <item name="android:layout_marginEnd">@dimen/tw_indentation</item>
+        <item name="android:gravity">center</item>
+        <item name="iconTint">@color/white</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker.Search" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/YPBlack</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorOnSecondary">@color/YPBlack</item>
+    </style>
+    </resources>
