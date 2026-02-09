@@ -25,8 +25,8 @@
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:layout_gravity">end</item>
-        <item name="android:layout_marginTop">@dimen/n_indentation</item>
-        <item name="android:layout_marginEnd">@dimen/tw_indentation</item>
+        <item name="android:layout_marginTop">@dimen/indentation_19</item>
+        <item name="android:layout_marginEnd">@dimen/indentation_12</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingTop">3dp</item>
         <item name="android:paddingStart">4dp</item>
@@ -38,5 +38,9 @@
         <item name="colorOnPrimary">@color/YPBlack</item>
         <item name="colorSecondary">@color/YP_text_LightGray</item>
         <item name="colorOnSecondary">@color/YP_text_Gray</item>
+    </style>
+    <style name="Theme.PlaylistMaker.Search.Text" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorOnPrimary">@color/settings_button</item>
     </style>
 </resources>
