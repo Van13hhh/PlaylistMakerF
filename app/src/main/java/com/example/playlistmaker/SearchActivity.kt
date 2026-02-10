@@ -3,22 +3,14 @@ package com.example.playlistmaker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 
 class SearchActivity : AppCompatActivity() {
     private var value: String = EMPTY_TEXT
@@ -127,50 +119,3 @@ class SearchActivity : AppCompatActivity() {
         private const val EMPTY_TEXT = ""
     }
 }
-
-class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-    private val trackImage: ImageView
-    private val trackName: TextView
-    private val trackAuthorName: TextView
-
-    init {
-        trackImage = itemView.findViewById(R.id.iv_trackImage)
-        trackName = itemView.findViewById(R.id.tv_trackName)
-        trackAuthorName = itemView.findViewById(R.id.tv_authorName)
-    }
-    fun bind(model: Track){
-        Glide.with(itemView)
-            .load(model.artworkUrl100)
-            .placeholder(R.drawable.outline_android_wifi_3_bar_off_24)
-            .centerCrop()
-            .into(trackImage)
-        trackImage.setBackgroundResource(R.drawable.rounded_corners);
-        trackImage.setClipToOutline(true)
-
-        trackName.text = model.trackName
-        trackAuthorName.text = "${model.artistName} · ${model.trackTime}"
-    }
-}
-class TrackAdapter(
-    private val listOfTracks: List<Track>
-): RecyclerView.Adapter<TrackViewHolder>(){
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): TrackViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.activity_rv_search,
-            parent,
-            false
-        )
-        return TrackViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(listOfTracks[position])
-    }
-
-    override fun getItemCount() = listOfTracks.size
-
-}
-
