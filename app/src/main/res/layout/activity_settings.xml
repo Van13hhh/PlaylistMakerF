@@ -16,23 +16,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/f_indentation"
-            android:layout_marginTop="@dimen/f_indentation"
-            android:layout_marginEnd="@dimen/ft_indentation"
-            android:layout_marginBottom="@dimen/f_indentation">
+            android:layout_marginStart="@dimen/indentation_4"
+            android:layout_marginTop="@dimen/indentation_4"
+            android:layout_marginEnd="@dimen/indentation_24"
+            android:layout_marginBottom="@dimen/indentation_4">
 
             <Button
                 android:foreground="?attr/selectableItemBackground"
                 android:id="@+id/back_to_main_menu"
-                android:layout_width="@dimen/fe_indentation"
-                android:layout_height="@dimen/fe_indentation"
+                android:layout_width="@dimen/indentation_48"
+                android:layout_height="@dimen/indentation_48"
                 android:layout_gravity="center_horizontal"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:paddingStart="@dimen/tw_indentation"
-                android:paddingTop="@dimen/tw_indentation"
-                android:paddingEnd="@dimen/tw_indentation"
-                android:paddingBottom="@dimen/tw_indentation"
+                android:paddingStart="@dimen/indentation_12"
+                android:paddingTop="@dimen/indentation_12"
+                android:paddingEnd="@dimen/indentation_12"
+                android:paddingBottom="@dimen/indentation_12"
                 app:icon="@drawable/ic_left_arrow_24x24"
                 app:iconTint="?attr/colorOnSecondary"
                 />
@@ -40,21 +40,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/fe_indentation">
+                android:layout_marginEnd="@dimen/indentation_48">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:layout_marginStart="@dimen/tw_indentation"
-                    android:layout_marginTop="@dimen/t_indentation"
+                    android:layout_marginStart="@dimen/indentation_12"
+                    android:layout_marginTop="@dimen/indentation_10"
                     android:layout_marginEnd="84dp"
-                    android:layout_marginBottom="@dimen/tw_indentation"
+                    android:layout_marginBottom="@dimen/indentation_12"
                     android:fontFamily="@font/ys_display_medium"
                     android:gravity="center_vertical"
                     android:text="@string/settings"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="@dimen/medium" />
+                    android:textSize="@dimen/medium22" />
             </LinearLayout>
         </LinearLayout>
 
@@ -64,7 +64,7 @@
     <FrameLayout
         android:id="@+id/settings_frameL1"
         style="@style/FrameLayout_sa_style"
-        android:layout_marginTop="@dimen/tf_indentation">
+        android:layout_marginTop="@dimen/indentation_24">
 
         <TextView
             style="@style/TextView_sa_style"
@@ -77,7 +77,7 @@
             android:layout_width="56dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
-            android:layout_marginTop="@dimen/t_indentation"
+            android:layout_marginTop="@dimen/indentation_10"
             android:layout_marginEnd="6dp"
             android:layout_marginBottom="11dp"
             tools:ignore="UseSwitchCompatOrMaterialXml" />

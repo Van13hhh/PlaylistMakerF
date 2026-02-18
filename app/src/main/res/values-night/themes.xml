@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
+        <item name="android:colorBackground">@color/YPBlack</item>
         <item name="colorPrimary">@color/background_setting_activity</item>
     </style>
     <style name="Theme.PlaylistMaker.Main" parent="Base.Theme.PlaylistMaker">
@@ -21,8 +22,8 @@
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:layout_gravity">end</item>
-        <item name="android:layout_marginTop">@dimen/n_indentation</item>
-        <item name="android:layout_marginEnd">@dimen/tw_indentation</item>
+        <item name="android:layout_marginTop">@dimen/indentation_19</item>
+        <item name="android:layout_marginEnd">@dimen/indentation_12</item>
         <item name="android:gravity">center</item>
         <item name="iconTint">@color/white</item>
     </style>
@@ -32,5 +33,9 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnSecondary">@color/YPBlack</item>
+    </style>
+    <style name="Theme.PlaylistMaker.Search.Text" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
     </style>
     </resources>

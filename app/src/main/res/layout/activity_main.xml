@@ -13,27 +13,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/tf_indentation">
+        android:layout_marginBottom="@dimen/indentation_24">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/f_indentation"
-            android:layout_marginTop="@dimen/f_indentation"
+            android:layout_marginStart="@dimen/indentation_4"
+            android:layout_marginTop="@dimen/indentation_4"
             android:layout_marginEnd="52dp"
-            android:layout_marginBottom="@dimen/f_indentation">
+            android:layout_marginBottom="@dimen/indentation_4">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/tw_indentation"
-                android:layout_marginTop="@dimen/t_indentation"
-                android:layout_marginBottom="@dimen/tw_indentation"
+                android:layout_marginStart="@dimen/indentation_12"
+                android:layout_marginTop="@dimen/indentation_10"
+                android:layout_marginBottom="@dimen/indentation_12"
                 android:fontFamily="@font/ys_display_medium"
                 android:gravity="center_vertical"
                 android:text="@string/plm_text"
                 android:textColor="@color/white"
-                android:textSize="@dimen/medium" />
+                android:textSize="@dimen/medium22" />
         </LinearLayout>
     </LinearLayout>
 
