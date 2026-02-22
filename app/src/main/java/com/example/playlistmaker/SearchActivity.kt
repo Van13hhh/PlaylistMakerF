@@ -2,58 +2,66 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
 class SearchActivity : AppCompatActivity() {
     private var value: String = EMPTY_TEXT
-    private val listOfTracks: List<Track> =listOf(
-        Track(
-            "Smells Like Teen Spirit",
-            "Nirvana",
-            "5:01",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"),
-        Track(
-            "Billie Jean",
-            "Michael Jackson",
-            "4:35",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg",
-        ),
-        Track(
-            "Stayin' Alive",
-            "Bee Gees",
-            "4:10",
-            "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg",
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg",
-        ),
-        Track(
-            "Sweet Child O'Mine",
-            "Guns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg",
-        )
-    )
+    private lateinit var clearBtn: Button
+    private lateinit var backButon: Button
+    private lateinit var edText: EditText
+    private lateinit var recycler: RecyclerView
+    private lateinit var textViewError: TextView
+    private lateinit var buttonError: Button
+    private lateinit var imageViewError: ImageView
+    private var isNightMode = false
+
+    private var lastSearchQuery = ""
+
+    private var listOfTracks: MutableList<Track> = mutableListOf()
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_search)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.ll_search)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+         isNightMode = (resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
 
-        val clearBtn = findViewById<Button>(R.id.clearIcon)
-        val backButon = findViewById<Button>(R.id.back_to_main_menu_search)
-        val edText = findViewById<EditText>(R.id.ed_text_search)
-        val recycler = findViewById<RecyclerView>(R.id.rv_search)
+        clearBtn = findViewById(R.id.clearIcon)
+        backButon = findViewById(R.id.back_to_main_menu_search)
+        edText = findViewById(R.id.ed_text_search)
+        recycler = findViewById(R.id.rv_search)
+        textViewError = findViewById(R.id.tv_error)
+        buttonError = findViewById(R.id.btn_error)
+        imageViewError = findViewById(R.id.iv_error)
+        listOfTracks = mutableListOf()
+
 
         recycler.adapter = TrackAdapter(listOfTracks)
 
@@ -63,7 +71,6 @@ class SearchActivity : AppCompatActivity() {
             false
         )
 
-
         edText.setText(value)
         clearBtn.visibility = clearButtonVisability(value)
         edText.requestFocus()
@@ -72,14 +79,15 @@ class SearchActivity : AppCompatActivity() {
             imm.showSoftInput(edText, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
 
-
         backButon.setOnClickListener {
             finish()
-
         }
 
         clearBtn.setOnClickListener {
             edText.setText("")
+            hideErrorViews()
+            recycler.visibility = View.GONE
+            listOfTracks.clear()
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(edText.windowToken, 0)
         }
@@ -92,6 +100,18 @@ class SearchActivity : AppCompatActivity() {
 
             value = edText.text.toString()
         }
+
+        edText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val text = edText.text.toString()
+                searchTrack(text)
+            }
+            false
+        }
+        buttonError.setOnClickListener {
+            hideErrorViews()
+            searchTrack(lastSearchQuery)
+        }
     }
     private fun clearButtonVisability(s: CharSequence?): Int{
         return if (s.isNullOrEmpty())
@@ -103,8 +123,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         value = savedInstanceState.getString(USER_TEXT, EMPTY_TEXT)
-        val edText = findViewById<EditText>(R.id.ed_text_search)
-        val clearBtn = findViewById<Button>(R.id.clearIcon)
+
 
         edText.setText(value)
         clearBtn.visibility = clearButtonVisability(value)
@@ -117,5 +136,78 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val USER_TEXT = "USER_TEXT"
         private const val EMPTY_TEXT = ""
+    }
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://itunes.apple.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    interface TrackApi{
+        @GET("/search?entity=song")
+        fun search(@Query("term") text: String): Call<TrackResponse>
+    }
+
+    private val trackService = retrofit.create(TrackApi::class.java)
+
+    fun searchTrack(text: String){
+        hideErrorViews()
+        lastSearchQuery = text
+        trackService
+            .search(text)
+            .enqueue( object : Callback<TrackResponse>{
+
+                override fun onResponse(call: Call<TrackResponse?>, response: Response<TrackResponse?>){
+                    if (response.isSuccessful){
+                        val trackResponse = response.body()
+                        if (trackResponse != null){
+                            listOfTracks.clear()
+                             listOfTracks.addAll(trackResponse.results)
+                            recycler.adapter?.notifyDataSetChanged()
+                            if (listOfTracks.isEmpty()){
+                                showEmptyState()
+                            }else {
+                                recycler.visibility = View.VISIBLE
+                            }
+                        }else{
+                            showEmptyState()
+                        }
+                    }else {
+                        showInternetError()
+                    }
+
+                }
+
+                override fun onFailure(call: Call<TrackResponse?>, t: Throwable){
+                    showInternetError()
+                }
+            })
+    }
+    fun hideErrorViews(){
+        buttonError.visibility = View.GONE
+        textViewError.visibility = View.GONE
+        imageViewError.visibility = View.GONE
+    }
+    fun showEmptyState(){
+        textViewError.visibility = View.VISIBLE
+        textViewError.text = getString(R.string.empty_error)
+        imageViewError.visibility = View.VISIBLE
+        if (isNightMode) {
+            imageViewError.setImageResource(R.drawable.empty_error_dark_120x120)
+        } else{
+            imageViewError.setImageResource(R.drawable.empty_error_light_120x120)
+        }
+
+    }
+    fun showInternetError(){
+        textViewError.visibility = View.VISIBLE
+        textViewError.text = getString(R.string.internet_error)
+        imageViewError.visibility = View.VISIBLE
+        buttonError.visibility = View.VISIBLE
+        recycler.visibility = View.GONE
+        if (isNightMode) {
+            imageViewError.setImageResource(R.drawable.internet_error_dark_120x120)
+        } else{
+            imageViewError.setImageResource(R.drawable.internet_error_light_120x120)
+        }
     }
 }
