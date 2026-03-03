@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_search"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:theme="@style/Theme.PlaylistMaker.Search"
-    >
+    android:theme="@style/Theme.PlaylistMaker.Search">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,7 +70,9 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:singleLine="true"
-            android:layout_marginEnd="16dp"/>
+            android:imeOptions="actionDone"
+            android:layout_marginEnd="16dp"
+            />
 
         <Button
             android:id="@+id/clearIcon"
@@ -84,6 +87,47 @@
             />
 
     </FrameLayout>
+
+    <ImageView
+        android:id="@+id/iv_error"
+        tools:src="@drawable/empty_error_light_120x120"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="102dp"
+        android:layout_marginStart="120dp"
+        android:layout_marginEnd="120dp"
+        android:visibility="gone"
+        />
+    <TextView
+        android:id="@+id/tv_error"
+        android:textColor="?attr/colorOnPrimary"
+        android:textSize="@dimen/indentation_19"
+        android:fontFamily="@font/ys_display_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/btn_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/ys_display_medium"
+        android:textSize="@dimen/indentation_14"
+        app:cornerRadius="54sp"
+        android:textAllCaps="false"
+        android:letterSpacing="0"
+        android:textColor="?attr/colorPrimary"
+        android:text="Обновить"
+        android:visibility="gone"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_search"
