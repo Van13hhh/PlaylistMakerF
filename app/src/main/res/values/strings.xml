@@ -14,6 +14,8 @@
     <string name="message" translatable="false">"Спасибо разработчикам и разработчицам за крутое приложение!"</string>
     <string name="mail" translatable="false">"novikovivan06@gmail.com"</string>
     <string name="empty_error" translatable="false">"Ничего не нашлось"</string>
+    <string name="history_button" translatable="false">"Очистить историю"</string>
+    <string name="history_text" translatable="false">"Вы искали"</string>
     <string name="internet_error" translatable="false">"Проблемы со связью
 
         Загрузка не удалась. Проверьте подключение к интернету"</string>

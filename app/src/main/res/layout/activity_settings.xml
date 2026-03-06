@@ -72,8 +72,8 @@
             android:layout_width="match_parent"
             android:text="@string/dark_theme" />
 
-        <Switch
-            android:id="@+id/switch1"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
             style="@style/Switch.Theme.PlaylistMaker"
             android:layout_width="56dp"
             android:layout_height="40dp"

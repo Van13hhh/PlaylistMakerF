@@ -2,19 +2,26 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,17 +30,24 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
+const val HISTORY_TRACK_KEY = "history_key"
 class SearchActivity : AppCompatActivity() {
     private var value: String = EMPTY_TEXT
     private lateinit var clearBtn: Button
     private lateinit var backButon: Button
-    private lateinit var edText: EditText
+    private lateinit var searchField: EditText
     private lateinit var recycler: RecyclerView
+
+    private lateinit var recyclerHistory: RecyclerView
     private lateinit var textViewError: TextView
     private lateinit var buttonError: Button
     private lateinit var imageViewError: ImageView
+    private lateinit var historyFr: FrameLayout
+    private lateinit var historyButton: Button
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var historyAdapter: TrackAdapter
+    private lateinit var linearLayoutHistory: LinearLayout
     private var isNightMode = false
 
     private var lastSearchQuery = ""
@@ -55,15 +69,23 @@ class SearchActivity : AppCompatActivity() {
 
         clearBtn = findViewById(R.id.clearIcon)
         backButon = findViewById(R.id.back_to_main_menu_search)
-        edText = findViewById(R.id.ed_text_search)
+        searchField = findViewById(R.id.ed_text_search)
         recycler = findViewById(R.id.rv_search)
+        recyclerHistory = findViewById(R.id.history_rv)
         textViewError = findViewById(R.id.tv_error)
         buttonError = findViewById(R.id.btn_error)
         imageViewError = findViewById(R.id.iv_error)
+        historyFr = findViewById(R.id.history_fr)
+        historyButton = findViewById(R.id.history_btn)
+        linearLayoutHistory = findViewById(R.id.LL_history)
         listOfTracks = mutableListOf()
+        searchHistory = SearchHistory(getSharedPreferences(HISTORY_TRACK_KEY, MODE_PRIVATE))
+        sharedPreferences = getSharedPreferences(HISTORY_TRACK_KEY, MODE_PRIVATE)
 
-
-        recycler.adapter = TrackAdapter(listOfTracks)
+        recycler.adapter = TrackAdapter(listOfTracks, sharedPreferences, { track ->
+            Log.d("TEST", "Колбэк в Activity: трек ${track.trackName} добавлен")
+            updateHistoryAdapter()
+        showHistoryUi()})
 
         recycler.layoutManager = LinearLayoutManager(
             this,
@@ -71,39 +93,32 @@ class SearchActivity : AppCompatActivity() {
             false
         )
 
-        edText.setText(value)
+        searchField.setText(value)
         clearBtn.visibility = clearButtonVisability(value)
-        edText.requestFocus()
-        edText.postDelayed({
+        searchField.requestFocus()
+        searchField.postDelayed({
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(edText, InputMethodManager.SHOW_IMPLICIT)
+            imm.showSoftInput(searchField, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
 
         backButon.setOnClickListener {
             finish()
         }
 
-        clearBtn.setOnClickListener {
-            edText.setText("")
-            hideErrorViews()
-            recycler.visibility = View.GONE
-            listOfTracks.clear()
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(edText.windowToken, 0)
-        }
 
-        edText.doOnTextChanged { s, start, before, count ->
+
+        searchField.doOnTextChanged { s, start, before, count ->
             if (!s.isNullOrEmpty())
                 clearBtn.visibility = clearButtonVisability(s)
             else
                 clearBtn.visibility = View.GONE
 
-            value = edText.text.toString()
+            value = searchField.text.toString()
         }
 
-        edText.setOnEditorActionListener { _, actionId, _ ->
+        searchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val text = edText.text.toString()
+                val text = searchField.text.toString()
                 searchTrack(text)
             }
             false
@@ -111,6 +126,56 @@ class SearchActivity : AppCompatActivity() {
         buttonError.setOnClickListener {
             hideErrorViews()
             searchTrack(lastSearchQuery)
+        }
+        searchField.setOnFocusChangeListener{view, hasFocus ->
+            if (searchField.hasFocus() && searchField.text.isEmpty() == true) showHistoryUi()
+            else hideHistoryUi()
+        }
+
+        searchField.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (searchField.hasFocus() && s?.isEmpty() == true) showHistoryUi()
+                else hideHistoryUi()
+            }
+
+        })
+
+        historyAdapter = TrackAdapter(searchHistory.getFromSharedPreference(), sharedPreferences, {})
+
+        recyclerHistory.adapter = historyAdapter
+
+        recyclerHistory.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        showHistoryUi()
+
+        clearBtn.setOnClickListener {
+            searchField.setText("")
+            hideErrorViews()
+            recycler.visibility = View.GONE
+            listOfTracks.clear()
+            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            inputMethodManager?.hideSoftInputFromWindow(searchField.windowToken, 0)
+
+            updateHistoryAdapter()
+
+            showHistoryUi()
+        }
+
+        historyButton.setOnClickListener {
+            sharedPreferences.edit()
+                .remove(HISTORY_TRACK_KEY)
+                .apply()
+            hideHistoryUi()
         }
     }
     private fun clearButtonVisability(s: CharSequence?): Int{
@@ -125,7 +190,7 @@ class SearchActivity : AppCompatActivity() {
         value = savedInstanceState.getString(USER_TEXT, EMPTY_TEXT)
 
 
-        edText.setText(value)
+        searchField.setText(value)
         clearBtn.visibility = clearButtonVisability(value)
     }
 
@@ -142,10 +207,7 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    interface TrackApi{
-        @GET("/search?entity=song")
-        fun search(@Query("term") text: String): Call<TrackResponse>
-    }
+
 
     private val trackService = retrofit.create(TrackApi::class.java)
 
@@ -209,5 +271,23 @@ class SearchActivity : AppCompatActivity() {
         } else{
             imageViewError.setImageResource(R.drawable.internet_error_light_120x120)
         }
+    }
+
+    fun showHistoryUi(){
+        if (searchHistory.getFromSharedPreference().isNotEmpty()) {
+            linearLayoutHistory.visibility = View.VISIBLE
+        } else {
+            linearLayoutHistory.visibility = View.GONE
+        }
+    }
+
+    fun hideHistoryUi(){
+        linearLayoutHistory.visibility = View.GONE
+    }
+    private fun updateHistoryAdapter() {
+        Log.d("TEST", "updateHistoryAdapter() вызван")
+        val historyList = searchHistory.getFromSharedPreference()
+        Log.d("TEST", "Получили список размером: ${historyList.size}")
+        historyAdapter.updateTracks(historyList)
     }
 }
