@@ -1,7 +1,9 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -10,7 +12,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
+import androidx.core.content.edit
 
+const val SETTING_SWITCHER_THEME = "theme_switcher"
 class SettingsActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,10 +32,23 @@ class SettingsActivity : AppCompatActivity() {
         val btnUserAgreement = findViewById<Button>(R.id.btn_user_agreement)
         val btnSupport = findViewById<Button>(R.id.btn_support)
         val btnShare = findViewById<Button>(R.id.btn_share)
-
         val frm_2 = findViewById<FrameLayout>(R.id.settings_frameL2)
         val frm_3 = findViewById<FrameLayout>(R.id.settings_frameL3)
         val frm_4 = findViewById<FrameLayout>(R.id.settings_frameL4)
+
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        val sharedPrefs = getSharedPreferences(SETTING_SWITCHER_THEME, MODE_PRIVATE)
+        val isDarkTheme = sharedPrefs.getBoolean(SETTING_SWITCHER_THEME, false)
+
+        themeSwitcher.isChecked = isDarkTheme
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            switchTheme(checked)
+            sharedPrefs.edit()
+                .putBoolean(SETTING_SWITCHER_THEME,checked)
+                .apply()
+        }
 
         btnBackToMainMenu.setOnClickListener {
             finish()
@@ -54,8 +72,12 @@ class SettingsActivity : AppCompatActivity() {
         btnShare.setOnClickListener {
             shareApp()
         }
+        switchTheme(isDarkTheme)
     }
 
+    private fun  switchTheme(checked: Boolean){
+        (application as App).switchTheme(checked)
+    }
     private fun showUserAgreement() {
         val url = Uri.parse(getString(R.string.url_yandex))
         val intent = Intent(Intent.ACTION_VIEW, url)
