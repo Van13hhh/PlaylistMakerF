@@ -21,6 +21,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -132,19 +133,11 @@ class SearchActivity : AppCompatActivity() {
             else hideHistoryUi()
         }
 
-        searchField.addTextChangedListener(object: TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-            }
+        searchField.doOnTextChanged { text, start, before, count ->
+            if (searchField.hasFocus() && text?.isEmpty() == true) showHistoryUi()
+            else hideHistoryUi()
+        }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (searchField.hasFocus() && s?.isEmpty() == true) showHistoryUi()
-                else hideHistoryUi()
-            }
-
-        })
 
         historyAdapter = TrackAdapter(searchHistory.getFromSharedPreference(), sharedPreferences, {})
 
@@ -161,7 +154,7 @@ class SearchActivity : AppCompatActivity() {
         clearBtn.setOnClickListener {
             searchField.setText("")
             hideErrorViews()
-            recycler.visibility = View.GONE
+            recycler.isVisible = false
             listOfTracks.clear()
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchField.windowToken, 0)
@@ -245,14 +238,14 @@ class SearchActivity : AppCompatActivity() {
             })
     }
     fun hideErrorViews(){
-        buttonError.visibility = View.GONE
-        textViewError.visibility = View.GONE
-        imageViewError.visibility = View.GONE
+        buttonError.isVisible = false
+        textViewError.isVisible = false
+        imageViewError.isVisible = false
     }
     fun showEmptyState(){
-        textViewError.visibility = View.VISIBLE
+        textViewError.isVisible = true
         textViewError.text = getString(R.string.empty_error)
-        imageViewError.visibility = View.VISIBLE
+        imageViewError.isVisible = true
         if (isNightMode) {
             imageViewError.setImageResource(R.drawable.empty_error_dark_120x120)
         } else{
@@ -261,9 +254,9 @@ class SearchActivity : AppCompatActivity() {
 
     }
     fun showInternetError(){
-        textViewError.visibility = View.VISIBLE
+        textViewError.isVisible = true
         textViewError.text = getString(R.string.internet_error)
-        imageViewError.visibility = View.VISIBLE
+        imageViewError.isVisible = true
         buttonError.visibility = View.VISIBLE
         recycler.visibility = View.GONE
         if (isNightMode) {
