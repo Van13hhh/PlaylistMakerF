@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
@@ -31,7 +32,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 const val HISTORY_TRACK_KEY = "history_key"
+
 class SearchActivity : AppCompatActivity() {
     private var value: String = EMPTY_TEXT
     private lateinit var clearBtn: Button
@@ -54,6 +57,7 @@ class SearchActivity : AppCompatActivity() {
     private var lastSearchQuery = ""
 
     private var listOfTracks: MutableList<Track> = mutableListOf()
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +68,7 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-         isNightMode = (resources.configuration.uiMode and
+        isNightMode = (resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK) ==
                 Configuration.UI_MODE_NIGHT_YES
 
@@ -84,9 +88,10 @@ class SearchActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(HISTORY_TRACK_KEY, MODE_PRIVATE)
 
         recycler.adapter = TrackAdapter(listOfTracks, sharedPreferences, { track ->
-            Log.d("TEST", "Колбэк в Activity: трек ${track.trackName} добавлен")
             updateHistoryAdapter()
-        showHistoryUi()})
+            showHistoryUi()
+            changeActivityToAP(track)
+        })
 
         recycler.layoutManager = LinearLayoutManager(
             this,
@@ -128,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
             hideErrorViews()
             searchTrack(lastSearchQuery)
         }
-        searchField.setOnFocusChangeListener{view, hasFocus ->
+        searchField.setOnFocusChangeListener { view, hasFocus ->
             if (searchField.hasFocus() && searchField.text.isEmpty() == true) showHistoryUi()
             else hideHistoryUi()
         }
@@ -138,8 +143,10 @@ class SearchActivity : AppCompatActivity() {
             else hideHistoryUi()
         }
 
-
-        historyAdapter = TrackAdapter(searchHistory.getFromSharedPreference(), sharedPreferences, {})
+        historyAdapter =
+            TrackAdapter(searchHistory.getFromSharedPreference(), sharedPreferences) { track ->
+                changeActivityToAP(track)
+            }
 
         recyclerHistory.adapter = historyAdapter
 
@@ -156,11 +163,10 @@ class SearchActivity : AppCompatActivity() {
             hideErrorViews()
             recycler.isVisible = false
             listOfTracks.clear()
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchField.windowToken, 0)
-
             updateHistoryAdapter()
-
             showHistoryUi()
         }
 
@@ -171,7 +177,8 @@ class SearchActivity : AppCompatActivity() {
             hideHistoryUi()
         }
     }
-    private fun clearButtonVisability(s: CharSequence?): Int{
+
+    private fun clearButtonVisability(s: CharSequence?): Int {
         return if (s.isNullOrEmpty())
             View.GONE
         else
@@ -191,69 +198,74 @@ class SearchActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString(USER_TEXT, value)
     }
+
     companion object {
         private const val USER_TEXT = "USER_TEXT"
         private const val EMPTY_TEXT = ""
     }
+
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://itunes.apple.com")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-
-
     private val trackService = retrofit.create(TrackApi::class.java)
 
-    fun searchTrack(text: String){
+    fun searchTrack(text: String) {
         hideErrorViews()
         lastSearchQuery = text
         trackService
             .search(text)
-            .enqueue( object : Callback<TrackResponse>{
+            .enqueue(object : Callback<TrackResponse> {
 
-                override fun onResponse(call: Call<TrackResponse?>, response: Response<TrackResponse?>){
-                    if (response.isSuccessful){
+                override fun onResponse(
+                    call: Call<TrackResponse?>,
+                    response: Response<TrackResponse?>
+                ) {
+                    if (response.isSuccessful) {
                         val trackResponse = response.body()
-                        if (trackResponse != null){
+                        if (trackResponse != null) {
                             listOfTracks.clear()
-                             listOfTracks.addAll(trackResponse.results)
+                            listOfTracks.addAll(trackResponse.results)
                             recycler.adapter?.notifyDataSetChanged()
-                            if (listOfTracks.isEmpty()){
+                            if (listOfTracks.isEmpty()) {
                                 showEmptyState()
-                            }else {
+                            } else {
                                 recycler.visibility = View.VISIBLE
                             }
-                        }else{
+                        } else {
                             showEmptyState()
                         }
-                    }else {
+                    } else {
                         showInternetError()
                     }
 
                 }
 
-                override fun onFailure(call: Call<TrackResponse?>, t: Throwable){
+                override fun onFailure(call: Call<TrackResponse?>, t: Throwable) {
                     showInternetError()
                 }
             })
     }
-    fun hideErrorViews(){
+
+    fun hideErrorViews() {
         buttonError.isVisible = false
         textViewError.isVisible = false
         imageViewError.isVisible = false
     }
-    fun showEmptyState(){
+
+    fun showEmptyState() {
         textViewError.isVisible = true
         textViewError.text = getString(R.string.empty_error)
         imageViewError.isVisible = true
         if (isNightMode) {
             imageViewError.setImageResource(R.drawable.empty_error_dark_120x120)
-        } else{
+        } else {
             imageViewError.setImageResource(R.drawable.empty_error_light_120x120)
         }
-
     }
-    fun showInternetError(){
+
+    fun showInternetError() {
         textViewError.isVisible = true
         textViewError.text = getString(R.string.internet_error)
         imageViewError.isVisible = true
@@ -261,12 +273,12 @@ class SearchActivity : AppCompatActivity() {
         recycler.visibility = View.GONE
         if (isNightMode) {
             imageViewError.setImageResource(R.drawable.internet_error_dark_120x120)
-        } else{
+        } else {
             imageViewError.setImageResource(R.drawable.internet_error_light_120x120)
         }
     }
 
-    fun showHistoryUi(){
+    fun showHistoryUi() {
         if (searchHistory.getFromSharedPreference().isNotEmpty()) {
             linearLayoutHistory.visibility = View.VISIBLE
         } else {
@@ -274,13 +286,20 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    fun hideHistoryUi(){
+    fun hideHistoryUi() {
         linearLayoutHistory.visibility = View.GONE
     }
+
     private fun updateHistoryAdapter() {
         Log.d("TEST", "updateHistoryAdapter() вызван")
         val historyList = searchHistory.getFromSharedPreference()
         Log.d("TEST", "Получили список размером: ${historyList.size}")
         historyAdapter.updateTracks(historyList)
+    }
+
+    private fun changeActivityToAP(track: Track) {
+        val intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra("track", track)
+        startActivity(intent)
     }
 }

@@ -4,6 +4,11 @@
     <string name="search" translatable="false">"Поиск"</string>
     <string name="my_text_lowercase">Медиатека</string>
     <string name="settings" translatable="false">"Настройки"</string>
+    <string name="Time" translatable="false">Длительность</string>
+    <string name="Album" translatable="false">Альбом</string>
+    <string name="Genre" translatable="false">Жанр</string>
+    <string name="Country" translatable="false">Страна</string>
+    <string name="Year" translatable="false">Год</string>
     <string name="dark_theme" translatable="false">"Темная тема"</string>
     <string name="s_app" translatable="false">"Поделится приложением"</string>
     <string name="t_support" translatable="false">"Написать в поддержку"</string>
