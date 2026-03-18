@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -36,9 +37,12 @@ class TrackViewHolder(
     }
 
     fun bind(model: Track) {
+        val value = TypedValue()
+        itemView.context.theme.resolveAttribute(R.attr.placeHolderRV, value, true)
+        val placeholderRes = value.resourceId
         Glide.with(itemView.context)
             .load(model.artworkUrl100)
-            .placeholder(R.drawable.outline_android_wifi_3_bar_off_24)
+            .placeholder(placeholderRes)
             .centerCrop()
             .into(trackImage)
         trackImage.setBackgroundResource(R.drawable.rounded_corners);

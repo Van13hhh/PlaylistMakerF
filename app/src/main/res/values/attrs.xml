@@ -3,4 +3,5 @@
     <attr name="playlistButtonSrc" format="reference" />
     <attr name="playlistLikeButtonSrc" format="reference" />
     <attr name="playlistPlaceHolder" format="reference" />
+    <attr name="placeHolderRV" format="reference" />
 </resources>

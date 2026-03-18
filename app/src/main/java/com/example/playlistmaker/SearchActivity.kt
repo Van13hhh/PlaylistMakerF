@@ -133,14 +133,12 @@ class SearchActivity : AppCompatActivity() {
             hideErrorViews()
             searchTrack(lastSearchQuery)
         }
-        searchField.setOnFocusChangeListener { view, hasFocus ->
-            if (searchField.hasFocus() && searchField.text.isEmpty() == true) showHistoryUi()
-            else hideHistoryUi()
+        searchField.setOnFocusChangeListener { _, hasFocus ->
+            updateUiVisibility()
         }
 
-        searchField.doOnTextChanged { text, start, before, count ->
-            if (searchField.hasFocus() && text?.isEmpty() == true) showHistoryUi()
-            else hideHistoryUi()
+        searchField.doOnTextChanged { text, _, _, _ ->
+            updateUiVisibility()
         }
 
         historyAdapter =
@@ -293,7 +291,6 @@ class SearchActivity : AppCompatActivity() {
     private fun updateHistoryAdapter() {
         Log.d("TEST", "updateHistoryAdapter() вызван")
         val historyList = searchHistory.getFromSharedPreference()
-        Log.d("TEST", "Получили список размером: ${historyList.size}")
         historyAdapter.updateTracks(historyList)
     }
 
@@ -301,5 +298,23 @@ class SearchActivity : AppCompatActivity() {
         val intent = Intent(this, AudioPlayerActivity::class.java)
         intent.putExtra("track", track)
         startActivity(intent)
+    }
+
+    private fun updateUiVisibility() {
+        val hasFocus = searchField.hasFocus()
+        val textIsEmpty = searchField.text.isNullOrEmpty()
+
+        if (hasFocus && textIsEmpty) {
+            // Показываем историю только если есть что показывать
+            showHistoryUi()
+            // Скрываем результаты поиска
+            recycler.visibility = View.GONE
+        } else {
+            hideHistoryUi()
+            // Показываем результаты поиска, если они есть
+            if (listOfTracks.isNotEmpty()) {
+                recycler.visibility = View.VISIBLE
+            }
+        }
     }
 }
