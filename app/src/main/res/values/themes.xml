@@ -39,7 +39,20 @@
         <item name="colorOnPrimary">@color/YPBlack</item>
         <item name="colorSecondary">@color/YP_text_LightGray</item>
         <item name="colorOnSecondary">@color/YP_text_Gray</item>
+        <item name="placeHolderRV">@drawable/placeholder_45x45_day</item>
+        <item name="colorControlActivated">@color/YPBlue</item>
     </style>
+
+    <style name="Theme.PlaylistMaker.AudioPlayer" parent="Base.Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/YPBlack</item>
+        <item name="colorSecondary">@color/YP_text_LightGray</item>
+        <item name="colorOnSecondary">@color/YP_text_Gray</item>
+        <item name="playlistButtonSrc">@drawable/button_audioplayer_51x51day</item>
+        <item name="playlistLikeButtonSrc">@drawable/button_like_51x51_day</item>
+        <item name="playlistPlaceHolder">@drawable/placeholder_ap_312x312_day</item>
+    </style>
+
     <style name="Theme.PlaylistMaker.Search.Text" parent="Base.Theme.PlaylistMaker">
         <item name="colorPrimary">@color/black</item>
         <item name="colorOnPrimary">@color/settings_button</item>

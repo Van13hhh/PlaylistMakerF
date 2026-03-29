@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="playlistButtonSrc" format="reference" />
+    <attr name="playlistLikeButtonSrc" format="reference" />
+    <attr name="playlistPlaceHolder" format="reference" />
+    <attr name="placeHolderRV" format="reference" />
+</resources>

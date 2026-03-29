@@ -18,4 +18,6 @@
     <color name="YP_text_Gray">#818C99</color>
     <color name="YP_text_LightGray">#E6E8EB</color>
     <color name="YPBlack">#1A1B22</color>
+    <color name="YPBlue">#3772E7</color>
+    <color name="TakeCursorBlue">#48A3F8</color>
 </resources>

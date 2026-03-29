@@ -16,6 +16,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import androidx.core.content.edit
 
 const val SETTING_SWITCHER_THEME = "theme_switcher"
+
 class SettingsActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             switchTheme(checked)
             sharedPrefs.edit()
-                .putBoolean(SETTING_SWITCHER_THEME,checked)
+                .putBoolean(SETTING_SWITCHER_THEME, checked)
                 .apply()
         }
 
@@ -75,9 +76,10 @@ class SettingsActivity : AppCompatActivity() {
         switchTheme(isDarkTheme)
     }
 
-    private fun  switchTheme(checked: Boolean){
+    private fun switchTheme(checked: Boolean) {
         (application as App).switchTheme(checked)
     }
+
     private fun showUserAgreement() {
         val url = Uri.parse(getString(R.string.url_yandex))
         val intent = Intent(Intent.ACTION_VIEW, url)
@@ -95,12 +97,12 @@ class SettingsActivity : AppCompatActivity() {
         startActivity(shareIntent)
     }
 
-        private fun shareApp() {
-            val message = this.getString(R.string.url_share)
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.setType("text/plain")
-            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
-            val chooser = Intent.createChooser(shareIntent, "Send in ...")
-            startActivity(chooser)
-        }
+    private fun shareApp() {
+        val message = this.getString(R.string.url_share)
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.setType("text/plain")
+        shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+        val chooser = Intent.createChooser(shareIntent, "Send in ...")
+        startActivity(chooser)
     }
+}

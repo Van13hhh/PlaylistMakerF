@@ -10,7 +10,7 @@ class TrackAdapter(
     private var listOfTracks: List<Track>,
     private val sharedPreferences: SharedPreferences,
     private val onClick: (Track) -> Unit
-): RecyclerView.Adapter<TrackViewHolder>(){
+) : RecyclerView.Adapter<TrackViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -22,13 +22,14 @@ class TrackAdapter(
         )
         return TrackViewHolder(view, sharedPreferences, onClick)
     }
+
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(listOfTracks[position])
     }
 
     override fun getItemCount() = listOfTracks.size
 
-    fun updateTracks(newTracks: List<Track>){
+    fun updateTracks(newTracks: List<Track>) {
         listOfTracks = newTracks
         notifyDataSetChanged()
     }

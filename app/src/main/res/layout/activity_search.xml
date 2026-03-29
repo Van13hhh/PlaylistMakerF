@@ -72,6 +72,8 @@
             android:singleLine="true"
             android:imeOptions="actionDone"
             android:layout_marginEnd="16dp"
+            android:textCursorDrawable="@drawable/cursor"
+            android:textColorHighlight="@color/TakeCursorBlue"
             />
 
         <Button
