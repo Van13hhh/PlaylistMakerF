@@ -4,9 +4,6 @@
     <color name="blue">#3772E7</color>
     <color name="background_setting_activity">#1A1B22</color>
     <color name="switch_color">#00D6C3</color>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#000000</color>
@@ -15,8 +12,8 @@
     <color name="text_on_day_setting_activity">#000000</color>
     <color name="switch_line">#9FBBF3</color>
     <color name="settings_button">#AEAFB4</color>
-    <color name="YP_text_Gray">#818C99</color>
-    <color name="YP_text_LightGray">#E6E8EB</color>
+    <color name="YPGray">#818C99</color>
+    <color name="YPLightGrey">#E6E8EB</color>
     <color name="YPBlack">#1A1B22</color>
     <color name="YPBlue">#3772E7</color>
     <color name="TakeCursorBlue">#48A3F8</color>
