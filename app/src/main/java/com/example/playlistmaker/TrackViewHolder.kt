@@ -3,6 +3,8 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
@@ -18,7 +20,8 @@ import java.util.Locale
 class TrackViewHolder(
     itemView: View,
     sharedPreferences: SharedPreferences,
-    private val onTrackClick: (Track) -> Unit
+    private val onTrackClick: (Track) -> Unit,
+    private val clickDebounce: () -> Boolean,
 ) : RecyclerView.ViewHolder(itemView) {
     private val trackImage: ImageView
     private val trackName: TextView
@@ -53,8 +56,10 @@ class TrackViewHolder(
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
 
         fr_track.setOnClickListener {
-            searchHistory.addToList(model)
-            onTrackClick(model)
-        }
+                if (clickDebounce()){
+                    searchHistory.addToList(model)
+                    onTrackClick(model)
+                }
+            }
     }
 }

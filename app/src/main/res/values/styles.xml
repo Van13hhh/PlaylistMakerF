@@ -77,6 +77,6 @@
     <style name="AudioPlayer.TextView2" parent="Theme.PlaylistMaker">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/indentation_13</item>
-        <item name="android:textColor">@color/YP_text_Gray</item>
+        <item name="android:textColor">@color/YPGray</item>
     </style>
 </resources>
