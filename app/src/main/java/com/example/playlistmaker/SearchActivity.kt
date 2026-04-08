@@ -66,7 +66,6 @@ class SearchActivity : AppCompatActivity() {
             searchTrack(query)
         }
     }
-    lateinit var track: String
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,8 +126,13 @@ class SearchActivity : AppCompatActivity() {
 
         searchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                track = searchField.text.toString()
-                searchTrack(track)
+                val userSearch = searchField.text.toString()
+                if (userSearch.isNotEmpty()) {
+                    searchTrack(userSearch)
+                    return@setOnEditorActionListener false
+                }else{
+                    return@setOnEditorActionListener true
+                }
             }
             false
         }
@@ -186,6 +190,11 @@ class SearchActivity : AppCompatActivity() {
                 .apply()
             hideHistoryUi()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(searchRunnable)
     }
 
     private fun searchDebounce() {

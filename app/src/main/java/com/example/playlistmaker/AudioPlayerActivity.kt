@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import kotlinx.coroutines.Runnable
+import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,9 +22,13 @@ class AudioPlayerActivity() : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
     private var playerState = STATE_DEFAULT
     private var mediaPlayer = MediaPlayer()
-    lateinit var url: String
-    lateinit var updateRunnable: Runnable
+    private lateinit var url: String
+    private lateinit var updateRunnable: Runnable
     private val handler = Handler(Looper.getMainLooper())
+
+    private val dateFormat by lazy {
+        SimpleDateFormat("mm:ss", Locale.getDefault())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +41,14 @@ class AudioPlayerActivity() : AppCompatActivity() {
             insets
         }
 
-        updateRunnable = object : Runnable{
+        updateRunnable = object : Runnable {
             override fun run() {
-                if (mediaPlayer.isPlaying){
-                    binding.tvTimeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-                    handler.postDelayed(this, 500L)
+                if (mediaPlayer.isPlaying) {
+                    binding.tvTimeTrack.text = dateFormat.format(mediaPlayer.currentPosition)
+                    handler.postDelayed(this, DELAY_MILLS)
                 }
             }
         }
-
 
         binding.btnPlay.setOnClickListener {
             playbackControl()
@@ -96,7 +100,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
             finish()
         }
         mediaPlayer.setOnCompletionListener {
-            binding.tvTimeTrack.text = "00:00"
+            binding.tvTimeTrack.text = dateFormat.format(Date(0))
             mediaPlayer.pause()
             binding.btnPlay.setImageResource(R.drawable.button__play_100x100)
         }
@@ -109,7 +113,7 @@ class AudioPlayerActivity() : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks {updateRunnable}
+        handler.removeCallbacks { updateRunnable }
         mediaPlayer.release()
     }
 
@@ -147,20 +151,22 @@ class AudioPlayerActivity() : AppCompatActivity() {
     }
 
     private fun playbackControl() {
-        when(playerState) {
+        when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
             }
+
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
             }
         }
     }
 
-    companion object{
+    companion object {
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+        private const val DELAY_MILLS = 500L
     }
 }
