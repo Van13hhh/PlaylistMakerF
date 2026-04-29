@@ -1,13 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.main
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
-
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.media.MediaActivity
+import com.example.playlistmaker.presentation.search.SearchActivity
+import com.example.playlistmaker.presentation.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         val btnSearch = findViewById<Button>(R.id.btn_search)
         val btnMedia = findViewById<Button>(R.id.btn_media)
         val btnSettings = findViewById<Button>(R.id.btn_settings)
-
 
         btnSearch.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)

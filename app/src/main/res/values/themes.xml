@@ -41,6 +41,8 @@
         <item name="colorOnSecondary">@color/YPGray</item>
         <item name="placeHolderRV">@drawable/placeholder_45x45_day</item>
         <item name="colorControlActivated">@color/YPBlue</item>
+        <item name="internetErrorImg">@drawable/internet_error_light_120x120</item>
+        <item name="emptyErrorImg">@drawable/empty_error_light_120x120</item>
     </style>
 
     <style name="Theme.PlaylistMaker.AudioPlayer" parent="Base.Theme.PlaylistMaker">

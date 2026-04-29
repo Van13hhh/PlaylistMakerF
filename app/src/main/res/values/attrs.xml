@@ -4,4 +4,6 @@
     <attr name="playlistLikeButtonSrc" format="reference" />
     <attr name="playlistPlaceHolder" format="reference" />
     <attr name="placeHolderRV" format="reference" />
+    <attr name="internetErrorImg" format="reference" />
+    <attr name="emptyErrorImg" format="reference" />
 </resources>
