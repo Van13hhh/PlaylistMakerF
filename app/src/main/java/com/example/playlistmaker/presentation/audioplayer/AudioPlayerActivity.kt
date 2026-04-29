@@ -1,6 +1,7 @@
 package com.example.playlistmaker.presentation.audioplayer
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -46,14 +47,24 @@ class AudioPlayerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val track = intent.getSerializableExtra("track") as Track
-        val trackUiModel = trackConverter.convert(track)
-        val url = trackUiModel.previewUrl
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("track", Track::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("track")
+        }
 
-        renderTrackInfo(trackUiModel)
+        if (track != null) {
+            val trackUiModel = trackConverter.convert(track)
 
-        playerInteractor.prepare(url) { state ->
-            renderPlayerState(state)
+            val url = trackUiModel.previewUrl
+            renderTrackInfo(trackUiModel)
+
+            playerInteractor.prepare(url) { state ->
+                renderPlayerState(state)
+            }
+        } else {
+            finish()
         }
 
         binding.btnPlay.setOnClickListener {

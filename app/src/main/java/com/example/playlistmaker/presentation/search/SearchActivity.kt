@@ -163,8 +163,6 @@ class SearchActivity : androidx.appcompat.app.AppCompatActivity() {
             searchDebounce()
         }
 
-
-
         showHistoryUi()
 
         clearBtn.setOnClickListener {
