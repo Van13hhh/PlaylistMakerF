@@ -1,34 +1,27 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.search
 
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TrackViewHolder(
     itemView: View,
-    sharedPreferences: SharedPreferences,
     private val onTrackClick: (Track) -> Unit,
-    private val clickDebounce: () -> Boolean,
 ) : RecyclerView.ViewHolder(itemView) {
     private val trackImage: ImageView
     private val trackName: TextView
     private val trackAuthorName: TextView
     private val trackTime: TextView
     private val fr_track: FrameLayout
-    private val searchHistory: SearchHistory
+    private val placeholderRes: Int
 
     init {
         trackImage = itemView.findViewById(R.id.iv_trackImage)
@@ -36,30 +29,32 @@ class TrackViewHolder(
         trackAuthorName = itemView.findViewById(R.id.tv_authorName)
         trackTime = itemView.findViewById(R.id.trackTime)
         fr_track = itemView.findViewById(R.id.fr_track)
-        searchHistory = SearchHistory(sharedPreferences)
-    }
-
-    fun bind(model: Track) {
         val value = TypedValue()
         itemView.context.theme.resolveAttribute(R.attr.placeHolderRV, value, true)
-        val placeholderRes = value.resourceId
+        placeholderRes = value.resourceId
+    }
+
+    fun bind(track: Track) {
+
         Glide.with(itemView.context)
-            .load(model.artworkUrl100)
+            .load(track.artworkUrl100)
             .placeholder(placeholderRes)
             .centerCrop()
             .into(trackImage)
         trackImage.setBackgroundResource(R.drawable.rounded_corners);
         trackImage.setClipToOutline(true)
-        trackName.text = model.trackName
-        trackAuthorName.text = model.artistName
+        trackName.text = track.trackName
+        trackAuthorName.text = track.artistName
         trackTime.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
+            dateFormat.format(track.trackTimeMillis)
 
         fr_track.setOnClickListener {
-                if (clickDebounce()){
-                    searchHistory.addToList(model)
-                    onTrackClick(model)
-                }
+                onTrackClick(track)
             }
+    }
+    companion object {
+        private val dateFormat by lazy {
+            SimpleDateFormat("mm:ss", Locale.getDefault())
+        }
     }
 }
