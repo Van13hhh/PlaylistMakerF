@@ -1,5 +1,6 @@
 package com.example.playlistmaker.creator
 
+import android.app.Application
 import android.content.Context
 import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.domain.settings.impl.SettingInteractorImpl
@@ -43,7 +44,7 @@ object Creator {
             getSettingsRepository(context))
     }
 
-    fun getSharingInteractor(context: Context): SharingInteractor{
+    fun getSharingInteractor(context: Application): SharingInteractor{
         return SharingInteractorImpl(ExternalNavigatorImpl(context))
     }
 

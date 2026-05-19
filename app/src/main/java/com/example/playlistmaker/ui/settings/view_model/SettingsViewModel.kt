@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.App
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.sharing.model.SupportInfo
+import com.example.playlistmaker.ui.common.SingleLiveEvent
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application){
 
@@ -29,7 +30,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val _isDarkTheme = MutableLiveData<Boolean>()
     fun observeTheme(): LiveData<Boolean> = _isDarkTheme
 
-    private val _navigation = MutableLiveData<NavigationAction>()
+    private val _navigation = SingleLiveEvent<NavigationAction>()
     fun observeNavigation(): LiveData<NavigationAction> = _navigation
 
     init {
@@ -43,17 +44,17 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun onAgreementClick(){
         val url =  sharingInteractor.getAgreementUrl()
-        _navigation.value = NavigationAction.Agreement(url)
+        _navigation.postValue(NavigationAction.Agreement(url))
     }
 
     fun onSupportClick(){
         val supportInfo = sharingInteractor.getSupportInfo()
-        _navigation.value = NavigationAction.Support(supportInfo)
+        _navigation.postValue(NavigationAction.Support(supportInfo))
     }
 
     fun onShareClick() {
         val url =  sharingInteractor.getShareUrl()
-        _navigation.value = NavigationAction.Share(url)
+        _navigation.postValue(NavigationAction.Share(url))
     }
 
     sealed interface NavigationAction {
