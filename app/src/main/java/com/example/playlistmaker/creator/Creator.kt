@@ -1,37 +1,33 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
-import com.example.playlistmaker.domain.impl.AudioPlayerInteractorImpl
-import com.example.playlistmaker.data.navigation.ExternalNavigatorImpl
-import com.example.playlistmaker.domain.impl.SettingInteractorImpl
-import com.example.playlistmaker.data.repository.TrackRepositoryImpl
-import com.example.playlistmaker.data.network.RetrofitNetworkClient
-import com.example.playlistmaker.data.repository.AudioPlayerRepositoryImpl
-import com.example.playlistmaker.data.repository.SearchHistoryRepositoryImpl
-import com.example.playlistmaker.data.repository.SettingsRepositoryImpl
-import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
-import com.example.playlistmaker.domain.interactors.AudioPlayerInteractor
-import com.example.playlistmaker.domain.interactors.SettingInteractor
-import com.example.playlistmaker.domain.interactors.SharingInteractor
-import com.example.playlistmaker.domain.impl.SharingInteractorImpl
-import com.example.playlistmaker.domain.interactors.TrackInteractor
-import com.example.playlistmaker.domain.repository.TrackRepository
-import com.example.playlistmaker.domain.impl.TrackInteractorImpl
-import com.example.playlistmaker.domain.interactors.SearchHistoryInteractor
-import com.example.playlistmaker.domain.mapers.TrackConverter
-import com.example.playlistmaker.domain.repository.SettingsRepository
+import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
+import com.example.playlistmaker.domain.settings.impl.SettingInteractorImpl
+import com.example.playlistmaker.data.search.impl.TrackRepositoryImpl
+import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
+import com.example.playlistmaker.data.search.impl.SearchHistoryRepositoryImpl
+import com.example.playlistmaker.data.search.storage.PrefsStorageClient
+import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
+import com.example.playlistmaker.domain.search.impl.SearchHistoryInteractorImpl
+import com.example.playlistmaker.domain.settings.SettingInteractor
+import com.example.playlistmaker.domain.sharing.SharingInteractor
+import com.example.playlistmaker.domain.sharing.impl.SharingInteractorImpl
+import com.example.playlistmaker.domain.search.TrackInteractor
+import com.example.playlistmaker.domain.search.TrackRepository
+import com.example.playlistmaker.domain.search.impl.TrackInteractorImpl
+import com.example.playlistmaker.domain.search.SearchHistoryInteractor
+import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.search.TrackConverter
+import com.example.playlistmaker.domain.settings.SettingsRepository
+import com.google.gson.reflect.TypeToken
 
 object Creator {
-    private fun getTrackRepository(): TrackRepository{
-        return TrackRepositoryImpl(RetrofitNetworkClient())
+    private fun getTrackRepository(context: Context): TrackRepository{
+        return TrackRepositoryImpl(RetrofitNetworkClient(context))
     }
 
-    fun provideTrackInteractor(): TrackInteractor{
-        return TrackInteractorImpl(getTrackRepository())
-    }
-
-    fun provideAudioPlayerInteractor(): AudioPlayerInteractor {
-        return AudioPlayerInteractorImpl(AudioPlayerRepositoryImpl())
+    fun provideTrackInteractor(context: Context): TrackInteractor{
+        return TrackInteractorImpl(getTrackRepository(context))
     }
 
     fun provideTrackConverter(): TrackConverter {
@@ -52,6 +48,9 @@ object Creator {
     }
 
     fun getSearchHistoryInteractor(context: Context): SearchHistoryInteractor{
-        return SearchHistoryInteractorImpl(SearchHistoryRepositoryImpl(context))
+        return SearchHistoryInteractorImpl(SearchHistoryRepositoryImpl(PrefsStorageClient(
+            context,
+            "HISTORY",
+            object : TypeToken<ArrayList<Track>>() {}.type)))
     }
 }
