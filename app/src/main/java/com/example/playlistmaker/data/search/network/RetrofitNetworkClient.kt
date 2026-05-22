@@ -10,10 +10,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-private const val imdBaseUrl = "https://itunes.apple.com"
+private const val IMD_BASE_URL = "https://itunes.apple.com"
 class RetrofitNetworkClient(private val context: Context): NetworkClient {
     private val retrofit = Retrofit.Builder()
-        .baseUrl(imdBaseUrl)
+        .baseUrl(IMD_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

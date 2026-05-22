@@ -14,19 +14,6 @@ import java.util.Locale
 
 class AudioPlayerViewModel(private val url: String) : ViewModel() {
 
-    companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-        private const val DELAY_MILLS = 500L
-        fun getFactory(url: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(url)
-            }
-        }
-    }
-
     private val mediaPlayer = MediaPlayer()
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
@@ -105,7 +92,20 @@ class AudioPlayerViewModel(private val url: String) : ViewModel() {
 
     fun resetTimer() {
         handler.removeCallbacks(updateTimeRunnable)
-        progressTimeLiveData.postValue("00:00")
+        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss", Locale.getDefault()).format(0))
+    }
+
+    companion object {
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
+        private const val DELAY_MILLS = 500L
+        fun getFactory(url: String): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                AudioPlayerViewModel(url)
+            }
+        }
     }
 
 }
