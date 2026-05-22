@@ -5,8 +5,8 @@ import com.google.gson.Gson
 import java.lang.reflect.Type
 import androidx.core.content.edit
 
-class PrefsStorageClient<T>(
-    private val context: Context,
+class StorageClientImpl<T>(
+    context: Context,
     private val dataKey: String,
     private val type: Type
 ) : StorageClient<T> {

@@ -13,7 +13,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -22,6 +21,7 @@ import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import com.example.playlistmaker.ui.search.TrackAdapter
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel.TrackState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -30,7 +30,7 @@ class SearchActivity : AppCompatActivity() {
     private var lastSearchQuery = ""
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    lateinit var viewModel: SearchViewModel
+    private  val viewModel by viewModel<SearchViewModel>()
 
     private val searchAdapter = TrackAdapter { track ->
         onTrackClick(track)
@@ -95,8 +95,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())[SearchViewModel::class.java]
-
         viewModel.observeState().observe(this) { state ->
             render(state)
         }

@@ -6,20 +6,22 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.search.TrackConverter
+import com.example.playlistmaker.ui.search.TrackUiModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class AudioPlayerViewModel(private val url: String) : ViewModel() {
-
-    private val mediaPlayer = MediaPlayer()
+class AudioPlayerViewModel(private val trackConverter: TrackConverter) : ViewModel() {
+    private var mediaPlayer: MediaPlayer? = null
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
 
     private val progressTimeLiveData = MutableLiveData("00:00")
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
+
+    private val trackUiModelLiveData = MutableLiveData<TrackUiModel>()
+    fun observeTrackUiModel(): LiveData<TrackUiModel> = trackUiModelLiveData
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -32,10 +34,6 @@ class AudioPlayerViewModel(private val url: String) : ViewModel() {
         }
     }
 
-    init {
-        preparedPlayer()
-    }
-
     fun onPlayButtonClick() {
         when (playerStateLiveData.value) {
             STATE_PLAYING -> pausePlayer()
@@ -43,32 +41,38 @@ class AudioPlayerViewModel(private val url: String) : ViewModel() {
         }
     }
 
-    private fun preparedPlayer() {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
-        }
-        mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
-            resetTimer()
+    fun loadTrack(track: Track) {
+        val trackUiModel = trackConverter.convert(track)
+        trackUiModelLiveData.postValue(trackUiModel)
+
+        releasePlayer()
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(track.previewUrl)
+            prepareAsync()
+            setOnPreparedListener {
+                playerStateLiveData.postValue(STATE_PREPARED)
+            }
+            setOnCompletionListener {
+                playerStateLiveData.postValue(STATE_PREPARED)
+                resetTimer()
+            }
         }
     }
 
     override fun onCleared() {
         super.onCleared()
         pauseTimer()
-        mediaPlayer.release()
+        releasePlayer()
     }
 
     private fun pausePlayer() {
         pauseTimer()
-        mediaPlayer.pause()
+        mediaPlayer?.pause()
         playerStateLiveData.postValue(STATE_PAUSED)
     }
 
     private fun startPlayer() {
-        mediaPlayer.start()
+        mediaPlayer?.start()
         playerStateLiveData.postValue(STATE_PLAYING)
         startTimer()
     }
@@ -80,7 +84,7 @@ class AudioPlayerViewModel(private val url: String) : ViewModel() {
     private fun updateProgress() {
         progressTimeLiveData.postValue(
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(
-                mediaPlayer.currentPosition
+                mediaPlayer?.currentPosition
             )
         )
     }
@@ -88,6 +92,11 @@ class AudioPlayerViewModel(private val url: String) : ViewModel() {
     fun startTimer() {
         pauseTimer()
         handler.postDelayed(updateTimeRunnable, DELAY_MILLS)
+    }
+
+    private fun releasePlayer() {
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     fun resetTimer() {
@@ -101,11 +110,6 @@ class AudioPlayerViewModel(private val url: String) : ViewModel() {
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
         private const val DELAY_MILLS = 500L
-        fun getFactory(url: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(url)
-            }
-        }
     }
 
 }

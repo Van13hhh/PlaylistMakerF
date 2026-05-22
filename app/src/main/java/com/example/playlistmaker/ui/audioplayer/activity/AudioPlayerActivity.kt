@@ -9,19 +9,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.ui.search.TrackUiModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
-    private lateinit var viewModel: AudioPlayerViewModel
+    private val viewModel by viewModel<AudioPlayerViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,16 +46,12 @@ class AudioPlayerActivity : AppCompatActivity() {
             return
         }
 
-        val trackConverter = Creator.provideTrackConverter()
-        val trackUiModel = trackConverter.convert(track)
-        val url = trackUiModel.previewUrl
+        viewModel.loadTrack(track)
 
-        viewModel = ViewModelProvider(
-            this,
-            AudioPlayerViewModel.getFactory(url)
-        )[AudioPlayerViewModel::class.java]
 
-        renderTrackInfo(trackUiModel)
+        viewModel.observeTrackUiModel().observe(this) {
+            renderTrackInfo(it)
+        }
 
         viewModel.observePlayerState().observe(this) {
             renderPlayerState(it)
