@@ -14,14 +14,13 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
-import com.example.playlistmaker.ui.search.TrackUiModel
+import com.example.playlistmaker.domain.player.model.TrackUiModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
     private val viewModel by viewModel<AudioPlayerViewModel>()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,16 +48,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.loadTrack(track)
 
 
-        viewModel.observeTrackUiModel().observe(this) {
-            renderTrackInfo(it)
-        }
-
         viewModel.observePlayerState().observe(this) {
             renderPlayerState(it)
-        }
-
-        viewModel.observeProgressTime().observe(this) {
-            binding.tvTimeTrack.text = it
         }
 
         binding.btnPlay.setOnClickListener {
@@ -97,26 +88,25 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun renderPlayerState(state: Int) {
+    private fun renderPlayerState(state: AudioPlayerViewModel.PlayerState) {
         when (state) {
-            AudioPlayerViewModel.STATE_PLAYING -> {
-                binding.btnPlay.setImageResource(R.drawable.button_stop_100x100)
+            is AudioPlayerViewModel.PlayerState.PlayingState -> {
+                renderPlayingState(state.state)
+                binding.tvTimeTrack.text = state.time
             }
 
-            AudioPlayerViewModel.STATE_PAUSED -> {
-                binding.btnPlay.setImageResource(R.drawable.button__play_100x100)
-            }
-
-            AudioPlayerViewModel.STATE_PREPARED -> {
-                binding.btnPlay.setImageResource(R.drawable.button__play_100x100)
-                binding.tvTimeTrack.text = "00:00"
-            }
-
-            AudioPlayerViewModel.STATE_DEFAULT -> {
-                binding.btnPlay.setImageResource(R.drawable.button__play_100x100)
-                binding.tvTimeTrack.text = "00:00"
-            }
+            is AudioPlayerViewModel.PlayerState.Track -> renderTrackInfo(state.track)
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun renderPlayingState(state: Int) {
+        binding.btnPlay.setImageResource(
+            when (state) {
+                AudioPlayerViewModel.STATE_PLAYING -> R.drawable.button_stop_100x100
+                else -> R.drawable.button__play_100x100
+            }
+        )
     }
 
 }

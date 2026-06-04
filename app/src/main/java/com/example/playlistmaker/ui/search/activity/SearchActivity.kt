@@ -98,11 +98,6 @@ class SearchActivity : AppCompatActivity() {
         viewModel.observeState().observe(this) { state ->
             render(state)
         }
-
-        viewModel.observeHistory().observe(this) { history ->
-            historyAdapter.updateTracks(history)
-            updateHistoryVisibility()
-        }
     }
 
     private fun setupListeners() {
@@ -163,6 +158,10 @@ class SearchActivity : AppCompatActivity() {
             is TrackState.Content -> showContent(state.tracks)
             is TrackState.Empty -> showError(false, getString(R.string.empty_error))
             is TrackState.Error -> showError(true, getString(R.string.internet_error))
+            is TrackState.History -> {
+                historyAdapter.updateTracks(state.tracks)
+                updateHistoryVisibility()
+            }
         }
     }
 
@@ -243,12 +242,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun onTrackClick(track: Track) {
         if (clickDebounce()) {
-            // 1. Навигация — это обязанность Activity
             val intent = Intent(this, AudioPlayerActivity::class.java)
             intent.putExtra("track", track)
             startActivity(intent)
 
-            // 2. Сообщить ViewModel о действии — тоже правильно
             viewModel.saveTrackToHistory(track)
         }
     }

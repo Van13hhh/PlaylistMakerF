@@ -7,53 +7,138 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.ui.search.TrackConverter
-import com.example.playlistmaker.ui.search.TrackUiModel
+import com.example.playlistmaker.util.TrackConverter
+import com.example.playlistmaker.domain.player.model.TrackUiModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class AudioPlayerViewModel(private val trackConverter: TrackConverter) : ViewModel() {
-    private var mediaPlayer: MediaPlayer? = null
-    private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
-    fun observePlayerState(): LiveData<Int> = playerStateLiveData
+class AudioPlayerViewModel(
+    private val trackConverter: TrackConverter,
+    private var mediaPlayer: MediaPlayer?
+) : ViewModel() {
+    private val playerStateLiveData = MutableLiveData<PlayerState>(
+        PlayerState.PlayingState(
+            state = STATE_DEFAULT,
+            time = formatTime(0)
+        )
+    )
 
-    private val progressTimeLiveData = MutableLiveData("00:00")
-    fun observeProgressTime(): LiveData<String> = progressTimeLiveData
-
-    private val trackUiModelLiveData = MutableLiveData<TrackUiModel>()
-    fun observeTrackUiModel(): LiveData<TrackUiModel> = trackUiModelLiveData
+    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
     private val handler = Handler(Looper.getMainLooper())
 
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
-            if (playerStateLiveData.value == STATE_PLAYING) {
+            val currentState = playerStateLiveData.value
+            if (currentState is PlayerState.PlayingState && currentState.state == STATE_PLAYING) {
                 updateProgress()  // Обновляем время
                 handler.postDelayed(this, DELAY_MILLS)  // Планируем следующий запуск
             }
         }
     }
 
+    fun resetTimer() {
+        handler.removeCallbacks(updateTimeRunnable)
+        updateState(newState = STATE_PREPARED, newTime = formatTime(0))
+    }
+
+    private fun updateState(
+        newState: Int? = null,
+        newTime: String? = null
+    ) {
+        val updatedState = when (val currentState = playerStateLiveData.value) {
+            is PlayerState.PlayingState -> {
+                currentState.copy(
+                    state = newState ?: currentState.state,
+                    time = newTime ?: currentState.time
+                )
+            }
+            else -> {
+                PlayerState.PlayingState(
+                    state = newState ?: STATE_DEFAULT,
+                    time = newTime ?: formatTime(0)
+                )
+            }
+        }
+
+        playerStateLiveData.postValue(updatedState)
+    }
+
+    private fun pausePlayer() {
+        pauseTimer()
+        mediaPlayer?.pause()
+        updateState(newState = STATE_PAUSED, newTime = formatTime(mediaPlayer?.currentPosition))
+    }
+
+    private fun updateProgress() {
+        updateState(newTime = formatTime(mediaPlayer?.currentPosition))
+    }
+
+    private fun startPlayer() {
+        mediaPlayer?.start()
+        updateState(newState = STATE_PLAYING, newTime = formatTime(mediaPlayer?.currentPosition ?: 0))
+        startTimer()
+    }
+
+    private fun pauseTimer() {
+        handler.removeCallbacks(updateTimeRunnable)
+    }
+
+    private fun releasePlayer() {
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    private fun formatTime(millis: Int?): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis ?: 0)
+    }
+
+    sealed interface PlayerState {
+        data class PlayingState(
+            val state: Int,
+            val time: String
+        ) : PlayerState
+
+        data class Track(
+            val track: TrackUiModel
+        ) : PlayerState
+    }
+
     fun onPlayButtonClick() {
-        when (playerStateLiveData.value) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
+        when (val state = playerStateLiveData.value) {
+            is PlayerState.PlayingState -> {
+                when (state.state) {
+                    STATE_PLAYING -> pausePlayer()
+                    STATE_PREPARED, STATE_PAUSED -> startPlayer()
+                }
+            }
+
+            else -> {
+                startPlayer()
+            }
         }
     }
 
     fun loadTrack(track: Track) {
         val trackUiModel = trackConverter.convert(track)
-        trackUiModelLiveData.postValue(trackUiModel)
-
         releasePlayer()
+        playerStateLiveData.postValue(PlayerState.Track(trackUiModel))
         mediaPlayer = MediaPlayer().apply {
             setDataSource(track.previewUrl)
             prepareAsync()
             setOnPreparedListener {
-                playerStateLiveData.postValue(STATE_PREPARED)
+                playerStateLiveData.postValue(
+                    PlayerState.PlayingState(
+                        STATE_PREPARED, formatTime(0)
+                    )
+                )
             }
             setOnCompletionListener {
-                playerStateLiveData.postValue(STATE_PREPARED)
+                playerStateLiveData.postValue(
+                    PlayerState.PlayingState(
+                        STATE_PREPARED, formatTime(0)
+                    )
+                )
                 resetTimer()
             }
         }
@@ -65,43 +150,9 @@ class AudioPlayerViewModel(private val trackConverter: TrackConverter) : ViewMod
         releasePlayer()
     }
 
-    private fun pausePlayer() {
-        pauseTimer()
-        mediaPlayer?.pause()
-        playerStateLiveData.postValue(STATE_PAUSED)
-    }
-
-    private fun startPlayer() {
-        mediaPlayer?.start()
-        playerStateLiveData.postValue(STATE_PLAYING)
-        startTimer()
-    }
-
-    private fun pauseTimer() {
-        handler.removeCallbacks(updateTimeRunnable)
-    }
-
-    private fun updateProgress() {
-        progressTimeLiveData.postValue(
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(
-                mediaPlayer?.currentPosition
-            )
-        )
-    }
-
     fun startTimer() {
         pauseTimer()
         handler.postDelayed(updateTimeRunnable, DELAY_MILLS)
-    }
-
-    private fun releasePlayer() {
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-
-    fun resetTimer() {
-        handler.removeCallbacks(updateTimeRunnable)
-        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss", Locale.getDefault()).format(0))
     }
 
     companion object {

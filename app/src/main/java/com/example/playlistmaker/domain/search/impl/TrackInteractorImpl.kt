@@ -2,10 +2,9 @@ package com.example.playlistmaker.domain.search.impl
 
 import com.example.playlistmaker.domain.search.TrackInteractor
 import com.example.playlistmaker.domain.search.TrackRepository
-import java.util.concurrent.Executors
+import java.util.concurrent.Executor
 
-class TrackInteractorImpl(private val repository: TrackRepository) : TrackInteractor {
-    private val executor = Executors.newFixedThreadPool(2)
+class TrackInteractorImpl(private val repository: TrackRepository, private val executor: Executor) : TrackInteractor {
     override fun searchTrack(
         expression: String,
         consumer: TrackInteractor.TrackConsumer

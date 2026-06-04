@@ -1,18 +1,16 @@
 package com.example.playlistmaker.data.search.storage
 
-import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import java.lang.reflect.Type
 import androidx.core.content.edit
 
 class StorageClientImpl<T>(
-    context: Context,
     private val dataKey: String,
-    private val type: Type
+    private val type: Type,
+    private val gson: Gson,
+    private val sharedPreferences: SharedPreferences
 ) : StorageClient<T> {
-
-    private val sharedPreferences = context.getSharedPreferences(dataKey, Context.MODE_PRIVATE)
-    private val gson = Gson()
 
     override fun storeData(data: T) {
         val json = gson.toJson(data, type)

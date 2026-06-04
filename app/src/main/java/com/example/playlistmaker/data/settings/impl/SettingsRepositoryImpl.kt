@@ -1,12 +1,11 @@
 package com.example.playlistmaker.data.settings.impl
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.domain.settings.SettingsRepository
 
-class SettingsRepositoryImpl(context: Context): SettingsRepository {
-    private val prefs = context.getSharedPreferences("theme_switcher", Context.MODE_PRIVATE)
+class SettingsRepositoryImpl(private val prefs: SharedPreferences): SettingsRepository {
 
     override fun isDarkTheme(): Boolean = prefs.getBoolean("theme_switcher", false)
     @SuppressLint("UseKtx")

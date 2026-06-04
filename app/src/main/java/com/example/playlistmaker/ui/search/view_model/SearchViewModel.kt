@@ -20,9 +20,6 @@ class SearchViewModel(
     private val stateLiveData = MutableLiveData<TrackState>()
     fun observeState(): LiveData<TrackState> = stateLiveData
 
-    private val historyLiveData = MutableLiveData<List<Track>>()
-    fun observeHistory(): LiveData<List<Track>> = historyLiveData
-
     // ==================== DEPENDENCIES ====================
 
     private val handler = Handler(Looper.getMainLooper())
@@ -86,7 +83,9 @@ class SearchViewModel(
     // ==================== HISTORY ====================
 
     fun loadHistory() {
-        historyLiveData.postValue(searchHistoryInteractor.getHistory())
+        stateLiveData.postValue(TrackState.History(
+            searchHistoryInteractor.getHistory()
+        ))
     }
 
     fun saveTrackToHistory(track: Track) {
@@ -122,6 +121,9 @@ class SearchViewModel(
         object Error : TrackState
 
         object Empty : TrackState
+        data class History(
+            val tracks: List<Track>
+        ): TrackState
     }
 
     // ==================== COMPANION ====================

@@ -9,6 +9,7 @@ import com.example.playlistmaker.domain.search.TrackRepository
 import com.example.playlistmaker.domain.settings.SettingsRepository
 import com.example.playlistmaker.domain.sharing.ExternalNavigator
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val repositoryModule = module {
@@ -18,15 +19,14 @@ val repositoryModule = module {
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get())
+        SearchHistoryRepositoryImpl(get(named("search_history")))
     }
 
     single<SettingsRepository> {
-        SettingsRepositoryImpl(androidContext())
+        SettingsRepositoryImpl(get(named("theme_switcher")))
     }
 
     single<ExternalNavigator>{
         ExternalNavigatorImpl(androidContext())
     }
-
 }

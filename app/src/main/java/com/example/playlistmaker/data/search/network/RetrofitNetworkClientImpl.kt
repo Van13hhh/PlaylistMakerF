@@ -5,19 +5,10 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.playlistmaker.data.search.dto.Response
 import com.example.playlistmaker.data.search.dto.TrackSearchRequest
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-private const val IMD_BASE_URL = "https://itunes.apple.com"
-class RetrofitNetworkClientImpl(private val context: Context): RetrofitNetworkClient {
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(IMD_BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val itunesService = retrofit.create(ItunesApiService::class.java)
+class RetrofitNetworkClientImpl(private val context: Context, private val itunesService: ItunesApiService): RetrofitNetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (!isConnected()) {
