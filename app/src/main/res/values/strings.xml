@@ -4,8 +4,12 @@
     <string name="search" translatable="false">"Поиск"</string>
     <string name="my_text_lowercase">Медиатека</string>
     <string name="settings" translatable="false">"Настройки"</string>
+    <string name="mediateka" translatable="false">"Медиатека"</string>
     <string name="Time" translatable="false">Длительность</string>
     <string name="Album" translatable="false">Альбом</string>
+    <string name="media_empty_favtracks" translatable="false">Ваша медиатека пуста</string>
+    <string name="media_empty_playlists" translatable="false">Вы не создали ни одного плейлиста</string>
+    <string name="btn_media_text" translatable="false">Новый плейлист</string>
     <string name="Genre" translatable="false">Жанр</string>
     <string name="Country" translatable="false">Страна</string>
     <string name="Year" translatable="false">Год</string>
@@ -21,6 +25,8 @@
     <string name="empty_error" translatable="false">"Ничего не нашлось"</string>
     <string name="history_button" translatable="false">"Очистить историю"</string>
     <string name="history_text" translatable="false">"Вы искали"</string>
+    <string name="mediator_fav" translatable="false">"Избранные треки"</string>
+    <string name="mediator_playlists" translatable="false">"Плейлисты"</string>
     <string name="internet_error" translatable="false">"Проблемы со связью
 
         Загрузка не удалась. Проверьте подключение к интернету"</string>

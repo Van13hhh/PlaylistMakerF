@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain.player.model
+package com.example.playlistmaker.ui.audioplayer.activity
 
 data class TrackUiModel(
     val trackName: String,
