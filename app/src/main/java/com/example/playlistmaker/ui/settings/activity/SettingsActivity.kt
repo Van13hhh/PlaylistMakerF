@@ -8,13 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.ui.settings.view_model.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModel<SettingsViewModel>()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,6 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        initViewModel()
         observeViewModel()
         setupUI()
     }
@@ -46,13 +45,6 @@ class SettingsActivity : AppCompatActivity() {
         binding.btnSupport.setOnClickListener { viewModel.onSupportClick() }
         binding.settingsFrameL2.setOnClickListener { viewModel.onShareClick() }
         binding.btnShare.setOnClickListener { viewModel.onShareClick() }
-    }
-
-    private fun initViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.getFactory()
-        )[SettingsViewModel::class.java]
     }
 
     private fun observeViewModel() {

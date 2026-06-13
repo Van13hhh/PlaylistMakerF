@@ -1,50 +1,28 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.App
-import com.example.playlistmaker.creator.Creator
+import androidx.lifecycle.ViewModel
+import com.example.playlistmaker.domain.search.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.TrackInteractor
 import com.example.playlistmaker.domain.search.model.Track
 
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
-
-    // ==================== COMPANION ====================
-
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = (this[APPLICATION_KEY] as App)
-                SearchViewModel(app)
-            }
-        }
-    }
+class SearchViewModel(
+    private val trackInteractor: TrackInteractor,
+    private val searchHistoryInteractor: SearchHistoryInteractor
+) : ViewModel() {
 
     // ==================== LIVE DATA ====================
 
     private val stateLiveData = MutableLiveData<TrackState>()
     fun observeState(): LiveData<TrackState> = stateLiveData
 
-    private val historyLiveData = MutableLiveData<List<Track>>()
-    fun observeHistory(): LiveData<List<Track>> = historyLiveData
-
     // ==================== DEPENDENCIES ====================
 
     private val handler = Handler(Looper.getMainLooper())
-    private val trackInteractor: TrackInteractor = Creator.provideTrackInteractor(application)
-    private val searchHistoryInteractor = Creator.getSearchHistoryInteractor(application)
 
     // ==================== STATE ====================
 
@@ -86,7 +64,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
                     when (resultCode) {
                         -1 -> renderState(
-                                TrackState.Error
+                            TrackState.Error
                         )
 
                         else -> if (tracks.isEmpty()) {
@@ -105,7 +83,9 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     // ==================== HISTORY ====================
 
     fun loadHistory() {
-        historyLiveData.postValue(searchHistoryInteractor.getHistory())
+        stateLiveData.postValue(TrackState.History(
+            searchHistoryInteractor.getHistory()
+        ))
     }
 
     fun saveTrackToHistory(track: Track) {
@@ -132,15 +112,25 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     sealed interface TrackState {
-        object Loading: TrackState
+        object Loading : TrackState
 
         data class Content(
             val tracks: List<Track>
+        ) : TrackState
+
+        object Error : TrackState
+
+        object Empty : TrackState
+        data class History(
+            val tracks: List<Track>
         ): TrackState
+    }
 
-        object Error: TrackState
+    // ==================== COMPANION ====================
 
-        object Empty: TrackState
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
 }
