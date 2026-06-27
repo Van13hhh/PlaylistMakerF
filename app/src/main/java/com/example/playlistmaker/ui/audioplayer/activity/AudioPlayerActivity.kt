@@ -14,7 +14,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
-import com.example.playlistmaker.domain.player.model.TrackUiModel
+import com.example.playlistmaker.ui.audioplayer.activity.TrackUiModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayerActivity : AppCompatActivity() {

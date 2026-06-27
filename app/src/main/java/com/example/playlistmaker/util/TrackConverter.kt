@@ -1,6 +1,6 @@
 package com.example.playlistmaker.util
 
-import com.example.playlistmaker.domain.player.model.TrackUiModel
+import com.example.playlistmaker.ui.audioplayer.activity.TrackUiModel
 import com.example.playlistmaker.domain.search.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale

@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.TrackConverter
-import com.example.playlistmaker.domain.player.model.TrackUiModel
+import com.example.playlistmaker.ui.audioplayer.activity.TrackUiModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 

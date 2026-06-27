@@ -4,6 +4,7 @@
     <dimen name="regular16">16sp</dimen>
     <dimen name="regular11">11sp</dimen>
     <dimen name="corner_radius">16dp</dimen>
+    <dimen name="corner_radius_audio">54dp</dimen>
     <dimen name="indentation_16">16dp</dimen>
     <dimen name="indentation_18">18dp</dimen>
     <dimen name="indentation_1">1dp</dimen>
