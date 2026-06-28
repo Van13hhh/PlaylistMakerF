@@ -13,9 +13,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
 class SettingsFragment : Fragment() {
+
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<SettingsViewModel>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,11 +38,10 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            viewModel.switchTheme(
-                checked
-            )
+        binding.themeSwitcher.setOnClickListener {
+            viewModel.switchTheme(binding.themeSwitcher.isChecked)
         }
+
         binding.btnUserAgreement.setOnClickListener { viewModel.onAgreementClick() }
         binding.settingsFrameL4.setOnClickListener { viewModel.onAgreementClick() }
         binding.settingsFrameL3.setOnClickListener { viewModel.onSupportClick() }
@@ -50,21 +51,21 @@ class SettingsFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.observeTheme().observe(viewLifecycleOwner) {
-            binding.themeSwitcher.isChecked = it
+        viewModel.observeTheme().observe(viewLifecycleOwner) { isDark ->
+            binding.themeSwitcher.isChecked = isDark
         }
 
-        viewModel.observeNavigation().observe(viewLifecycleOwner) {
-            when (it) {
+        viewModel.observeNavigation().observe(viewLifecycleOwner) { action ->
+            when (action) {
                 is SettingsViewModel.NavigationAction.Agreement -> {
-                    val intent = Intent(Intent.ACTION_VIEW, it.url.toUri())
+                    val intent = Intent(Intent.ACTION_VIEW, action.url.toUri())
                     startActivity(intent)
                 }
 
                 is SettingsViewModel.NavigationAction.Share -> {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, it.url)
+                        putExtra(Intent.EXTRA_TEXT, action.url)
                     }
                     startActivity(intent)
                 }
@@ -72,9 +73,9 @@ class SettingsFragment : Fragment() {
                 is SettingsViewModel.NavigationAction.Support -> {
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
                         data = "mailto:".toUri()
-                        putExtra(Intent.EXTRA_EMAIL, it.info.mail)
-                        putExtra(Intent.EXTRA_SUBJECT, it.info.theme)
-                        putExtra(Intent.EXTRA_TEXT, it.info.message)
+                        putExtra(Intent.EXTRA_EMAIL, action.info.mail)
+                        putExtra(Intent.EXTRA_SUBJECT, action.info.theme)
+                        putExtra(Intent.EXTRA_TEXT, action.info.message)
                     }
                     startActivity(intent)
                 }

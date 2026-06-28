@@ -142,6 +142,7 @@ class SearchFragment : Fragment() {
             binding.edTextSearch.removeTextChangedListener(textWatcher)
             binding.edTextSearch.setText("")
             binding.edTextSearch.addTextChangedListener(textWatcher)
+            updateHistoryVisibility()
 
             value = EMPTY_TEXT
             lastSearchQuery = EMPTY_TEXT

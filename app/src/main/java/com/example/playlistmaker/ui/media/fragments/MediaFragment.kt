@@ -13,7 +13,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 class MediaFragment : Fragment() {
     private var _binding: FragmentMediaBinding? = null
     private val binding get() = _binding!!
-    private lateinit var tabMediator: TabLayoutMediator
+    private var tabMediator: TabLayoutMediator? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,12 +33,13 @@ class MediaFragment : Fragment() {
                 1 -> tab.text = getString(R.string.mediator_playlists)
             }
         }
-        tabMediator.attach()
+        tabMediator?.attach()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        tabMediator.detach()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tabMediator?.detach()
+        tabMediator = null
         _binding = null
     }
 }
