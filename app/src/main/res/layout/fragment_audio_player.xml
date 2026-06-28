@@ -2,10 +2,12 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nestedScrollViewAudioplayer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.PlaylistMaker.AudioPlayer"
-    android:id="@+id/nestedScrollViewAudioplayer">
+    tools:context=".ui.audioplayer.fragments.AudioPlayerFragment">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -48,7 +50,8 @@
             android:layout_marginTop="30dp"
             app:layout_constraintEnd_toStartOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/start_guideline"
-            app:layout_constraintTop_toBottomOf="@id/back_to_search" />
+            app:layout_constraintTop_toBottomOf="@id/back_to_search"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/tv_track_name"
@@ -84,7 +87,8 @@
             app:cornerRadius="69dp"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@id/start_guideline"
-            app:layout_constraintTop_toBottomOf="@id/tv_artist_name" />
+            app:layout_constraintTop_toBottomOf="@id/tv_artist_name"
+            tools:ignore="ContentDescription" />
 
         <ImageButton
             android:id="@+id/btn_play"
@@ -96,7 +100,8 @@
             app:layout_constraintEnd_toStartOf="@id/iv_like"
             app:layout_constraintStart_toEndOf="@id/iv_create_playlist"
             app:layout_constraintTop_toBottomOf="@id/tv_artist_name"
-            app:tint="?attr/colorOnPrimary" />
+            app:tint="?attr/colorOnPrimary"
+            tools:ignore="ContentDescription" />
 
         <ImageButton
             android:id="@+id/iv_like"
@@ -107,7 +112,8 @@
             android:src="?attr/playlistLikeButtonSrc"
             app:layout_constraintEnd_toStartOf="@id/guideline_end"
             app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintTop_toBottomOf="@id/tv_artist_name" />
+            app:layout_constraintTop_toBottomOf="@id/tv_artist_name"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/tv_time_track"

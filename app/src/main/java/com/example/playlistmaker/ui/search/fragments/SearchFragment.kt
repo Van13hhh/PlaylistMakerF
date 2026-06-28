@@ -1,36 +1,39 @@
-package com.example.playlistmaker.ui.search.activity
+package com.example.playlistmaker.ui.search.fragments
 
 import android.annotation.SuppressLint
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
+import com.example.playlistmaker.ui.audioplayer.fragments.AudioPlayerFragment
 import com.example.playlistmaker.ui.search.TrackAdapter
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel.TrackState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private var value: String = EMPTY_TEXT
-    private lateinit var binding: ActivitySearchBinding
     private var lastSearchQuery = ""
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    private  val viewModel by viewModel<SearchViewModel>()
+    private val viewModel by viewModel<SearchViewModel>()
+    private var isReturningFromBackStack = false
+    private lateinit var textWatcher: android.text.TextWatcher
 
     private val searchAdapter = TrackAdapter { track ->
         onTrackClick(track)
@@ -40,98 +43,113 @@ class SearchActivity : AppCompatActivity() {
         onTrackClick(track)
     }
 
-    // ==================== ЖИЗНЕННЫЙ ЦИКЛ ====================
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    @SuppressLint("MissingInflatedId")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        isReturningFromBackStack = savedInstanceState != null
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.llSearch) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        savedInstanceState?.let {
+            value = it.getString(USER_TEXT, EMPTY_TEXT)
+            lastSearchQuery = it.getString(LAST_SEARCH_QUERY, EMPTY_TEXT)
         }
 
         setupRecyclerViews()
         setupViewModel()
         setupListeners()
-        setupInitialState()
+
+        binding.edTextSearch.removeTextChangedListener(textWatcher)
+        binding.edTextSearch.setText(value)
+        binding.edTextSearch.setSelection(value.length)
+        binding.edTextSearch.addTextChangedListener(textWatcher)
+
+        binding.clearIcon.visibility = clearButtonVisibility(value)
+
+        if (isReturningFromBackStack) {
+            binding.edTextSearch.clearFocus()
+            binding.root.requestFocus()
+        } else {
+            showKeyboard()
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onResume() {
+        super.onResume()
+        isClickAllowed = true
+
+        updateUiVisibility()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
         handler.removeCallbacksAndMessages(null)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(USER_TEXT, value)
+        outState.putString(LAST_SEARCH_QUERY, lastSearchQuery)
     }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        value = savedInstanceState.getString(USER_TEXT, EMPTY_TEXT)
-        binding.edTextSearch.setText(value)
-        binding.clearIcon.visibility = clearButtonVisibility(value)
-    }
-
-    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
     private fun setupRecyclerViews() {
         binding.rvSearch.apply {
             adapter = searchAdapter
             layoutManager =
-                LinearLayoutManager(this@SearchActivity, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
         binding.historyRv.apply {
             adapter = historyAdapter
             layoutManager =
-                LinearLayoutManager(this@SearchActivity, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
     }
 
     private fun setupViewModel() {
-        viewModel.observeState().observe(this) { state ->
+        viewModel.observeState().observe(viewLifecycleOwner) { state ->
             render(state)
         }
     }
 
     private fun setupListeners() {
-        binding.backToMainMenuSearch.setOnClickListener {
-            finish()
-        }
-
         binding.btnError.setOnClickListener {
             hideErrorViews()
             binding.progressBar.isVisible = true
             viewModel.searchDebounce(false, lastSearchQuery)
         }
 
-        binding.edTextSearch.setOnFocusChangeListener { _, _ ->
-            updateUiVisibility()
-        }
-
-        binding.edTextSearch.doOnTextChanged { text, _, _, _ ->
-            updateUiVisibility()
+        textWatcher = binding.edTextSearch.doOnTextChanged { text, _, _, _ ->
             binding.clearIcon.visibility = clearButtonVisibility(text)
             value = text.toString()
 
             if (!text.isNullOrEmpty()) {
                 lastSearchQuery = text.toString()
                 viewModel.searchDebounce(true, text.toString())
+            } else {
+                viewModel.loadHistory()
             }
         }
 
         binding.clearIcon.setOnClickListener {
+            binding.edTextSearch.removeTextChangedListener(textWatcher)
             binding.edTextSearch.setText("")
+            binding.edTextSearch.addTextChangedListener(textWatcher)
+
+            value = EMPTY_TEXT
+            lastSearchQuery = EMPTY_TEXT
             binding.progressBar.isVisible = false
             hideErrorViews()
             binding.rvSearch.isVisible = false
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            binding.edTextSearch.clearFocus()
+            val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(binding.edTextSearch.windowToken, 0)
         }
 
@@ -140,17 +158,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupInitialState() {
-        binding.edTextSearch.setText(value)
-        binding.clearIcon.visibility = clearButtonVisibility(value)
+    private fun showKeyboard() {
         binding.edTextSearch.requestFocus()
         binding.edTextSearch.postDelayed({
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.edTextSearch, InputMethodManager.SHOW_IMPLICIT)
+            val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(binding.edTextSearch, 0)
         }, 200)
     }
-
-    // ==================== UI ОБНОВЛЕНИЯ ====================
 
     private fun render(state: TrackState) {
         when (state) {
@@ -222,8 +236,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    // ==================== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ====================
-
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
@@ -242,16 +254,17 @@ class SearchActivity : AppCompatActivity() {
 
     private fun onTrackClick(track: Track) {
         if (clickDebounce()) {
-            val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra("track", track)
-            startActivity(intent)
-
             viewModel.saveTrackToHistory(track)
+            findNavController().navigate(
+                R.id.action_searchFragment_to_audioPlayerFragment,
+                AudioPlayerFragment.createArgs(track)
+            )
         }
     }
 
     companion object {
         private const val USER_TEXT = "USER_TEXT"
+        private const val LAST_SEARCH_QUERY = "LAST_SEARCH_QUERY"
         private const val EMPTY_TEXT = ""
     }
 }

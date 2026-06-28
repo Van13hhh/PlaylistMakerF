@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.TrackConverter
-import com.example.playlistmaker.ui.audioplayer.activity.TrackUiModel
+import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -53,6 +53,7 @@ class AudioPlayerViewModel(
                     time = newTime ?: currentState.time
                 )
             }
+
             else -> {
                 PlayerState.PlayingState(
                     state = newState ?: STATE_DEFAULT,
@@ -76,7 +77,10 @@ class AudioPlayerViewModel(
 
     private fun startPlayer() {
         mediaPlayer?.start()
-        updateState(newState = STATE_PLAYING, newTime = formatTime(mediaPlayer?.currentPosition ?: 0))
+        updateState(
+            newState = STATE_PLAYING,
+            newTime = formatTime(mediaPlayer?.currentPosition ?: 0)
+        )
         startTimer()
     }
 

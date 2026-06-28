@@ -5,9 +5,10 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.domain.settings.SettingsRepository
 
-class SettingsRepositoryImpl(private val prefs: SharedPreferences): SettingsRepository {
+class SettingsRepositoryImpl(private val prefs: SharedPreferences) : SettingsRepository {
 
     override fun isDarkTheme(): Boolean = prefs.getBoolean("theme_switcher", false)
+
     @SuppressLint("UseKtx")
     override fun saveTheme(isDark: Boolean) {
         prefs.edit().putBoolean("theme_switcher", isDark).apply()

@@ -10,6 +10,7 @@ class TrackAdapter(
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
     var listOfTracks: MutableList<Track> = mutableListOf()
+
     companion object {
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
@@ -19,7 +20,9 @@ class TrackAdapter(
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(listOfTracks[position])
-        holder.itemView.setOnClickListener { clickListener.onTrackClick(listOfTracks[position]) }
+        holder.itemView.setOnClickListener {
+            clickListener.onTrackClick(listOfTracks[position])
+        }
     }
 
     override fun getItemCount() = listOfTracks.size

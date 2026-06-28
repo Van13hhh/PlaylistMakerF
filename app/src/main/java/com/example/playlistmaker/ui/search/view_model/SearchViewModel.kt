@@ -15,26 +15,16 @@ class SearchViewModel(
     private val searchHistoryInteractor: SearchHistoryInteractor
 ) : ViewModel() {
 
-    // ==================== LIVE DATA ====================
-
     private val stateLiveData = MutableLiveData<TrackState>()
     fun observeState(): LiveData<TrackState> = stateLiveData
 
-    // ==================== DEPENDENCIES ====================
-
     private val handler = Handler(Looper.getMainLooper())
 
-    // ==================== STATE ====================
-
     private var latestSearchText: String? = null
-
-    // ==================== INIT ====================
 
     init {
         loadHistory()
     }
-
-    // ==================== HISTORY ====================
 
     fun searchDebounce(forceSearch: Boolean, changedText: String) {
         if (latestSearchText == changedText && !forceSearch) {
@@ -80,12 +70,12 @@ class SearchViewModel(
         })
     }
 
-    // ==================== HISTORY ====================
-
     fun loadHistory() {
-        stateLiveData.postValue(TrackState.History(
-            searchHistoryInteractor.getHistory()
-        ))
+        stateLiveData.postValue(
+            TrackState.History(
+                searchHistoryInteractor.getHistory()
+            )
+        )
     }
 
     fun saveTrackToHistory(track: Track) {
@@ -98,13 +88,9 @@ class SearchViewModel(
         loadHistory()
     }
 
-    // ==================== RENDER ====================
-
     private fun renderState(state: TrackState) {
         stateLiveData.postValue(state)
     }
-
-    // ==================== CLEANUP ====================
 
     override fun onCleared() {
         super.onCleared()
@@ -123,10 +109,8 @@ class SearchViewModel(
         object Empty : TrackState
         data class History(
             val tracks: List<Track>
-        ): TrackState
+        ) : TrackState
     }
-
-    // ==================== COMPANION ====================
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L

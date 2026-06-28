@@ -50,7 +50,7 @@ val dataModule = module {
     }
 
 }
-val preferenceModule = module{
+val preferenceModule = module {
     single<SharedPreferences>(named("theme_switcher")) {
         androidContext().getSharedPreferences("theme_switcher", Context.MODE_PRIVATE)
     }

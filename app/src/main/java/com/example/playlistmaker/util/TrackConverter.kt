@@ -1,6 +1,6 @@
 package com.example.playlistmaker.util
 
-import com.example.playlistmaker.ui.audioplayer.activity.TrackUiModel
+import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import com.example.playlistmaker.domain.search.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -20,6 +20,7 @@ class TrackConverter {
             track.previewUrl
         )
     }
+
     private fun formatTime(timeMillis: Long): String {
         return try {
             SimpleDateFormat("mm:ss", Locale.getDefault())
@@ -29,10 +30,10 @@ class TrackConverter {
         }
     }
 
-    private fun formatDate(releaseDate: String?): String{
+    private fun formatDate(releaseDate: String?): String {
         return try {
             releaseDate?.take(4) ?: ""
-        } catch (_: Exception){
+        } catch (_: Exception) {
             ""
         }
     }

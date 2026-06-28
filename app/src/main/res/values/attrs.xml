@@ -6,4 +6,7 @@
     <attr name="placeHolderRV" format="reference" />
     <attr name="internetErrorImg" format="reference" />
     <attr name="emptyErrorImg" format="reference" />
+    <attr name="searchIcon" format="reference" />
+    <attr name="mediaIcon" format="reference" />
+    <attr name="settingsIcon" format="reference" />
 </resources>
