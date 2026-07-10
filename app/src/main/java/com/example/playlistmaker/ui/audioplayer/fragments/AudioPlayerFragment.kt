@@ -1,69 +1,74 @@
-package com.example.playlistmaker.ui.audioplayer.activity
+package com.example.playlistmaker.ui.audioplayer.fragments
 
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
-import com.example.playlistmaker.ui.audioplayer.activity.TrackUiModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class AudioPlayerActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityAudioPlayerBinding
+class AudioPlayerFragment : Fragment() {
+    private var _binding: FragmentAudioPlayerBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.nestedScrollViewAudioplayer) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("track", Track::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val track: Track? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable(ARGS_TRACK_KEY, Track::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra("track")
+            arguments?.getParcelable(ARGS_TRACK_KEY)
         }
 
         if (track == null) {
-            finish()
+            findNavController().popBackStack()
             return
         }
 
         viewModel.loadTrack(track)
 
-
-        viewModel.observePlayerState().observe(this) {
+        viewModel.observePlayerState().observe(viewLifecycleOwner) {
             renderPlayerState(it)
         }
 
         binding.btnPlay.setOnClickListener {
             viewModel.onPlayButtonClick()
         }
-
         binding.backToSearch.setOnClickListener {
-            finish()
+            findNavController().popBackStack()
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
     private fun renderTrackInfo(model: TrackUiModel) {
         val typedValue = TypedValue()
-        theme.resolveAttribute(R.attr.playlistPlaceHolder, typedValue, true)
+        requireContext().theme.resolveAttribute(R.attr.playlistPlaceHolder, typedValue, true)
         val imagePlaceholder = typedValue.resourceId
 
         binding.tvTrackName.text = model.trackName
@@ -109,4 +114,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         )
     }
 
+    companion object {
+        const val ARGS_TRACK_KEY = "track"
+        fun createArgs(track: Track): Bundle =
+            Bundle().apply {
+                putParcelable(ARGS_TRACK_KEY, track)
+            }
+    }
 }

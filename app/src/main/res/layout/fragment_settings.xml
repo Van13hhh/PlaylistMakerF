@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_settings"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:theme="@style/Theme.PlaylistMaker.Settings"
     android:orientation="vertical"
-    >
+    android:theme="@style/Theme.PlaylistMaker.Settings"
+    tools:context=".ui.settings.fragments.SettingsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,23 +19,9 @@
             android:layout_marginStart="@dimen/indentation_4"
             android:layout_marginTop="@dimen/indentation_4"
             android:layout_marginEnd="@dimen/indentation_24"
-            android:layout_marginBottom="@dimen/indentation_4">
+            android:layout_marginBottom="@dimen/indentation_4"
+            tools:ignore="UselessParent">
 
-            <Button
-                android:foreground="?attr/selectableItemBackground"
-                android:id="@+id/back_to_main_menu"
-                android:layout_width="@dimen/indentation_48"
-                android:layout_height="@dimen/indentation_48"
-                android:layout_gravity="center_horizontal"
-                android:background="@android:color/transparent"
-                android:gravity="center"
-                android:paddingStart="@dimen/indentation_12"
-                android:paddingTop="@dimen/indentation_12"
-                android:paddingEnd="@dimen/indentation_12"
-                android:paddingBottom="@dimen/indentation_12"
-                app:icon="@drawable/ic_left_arrow_24x24"
-                app:iconTint="?attr/colorOnSecondary"
-                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,68 +70,62 @@
     </FrameLayout>
 
     <FrameLayout
-        style="@style/FrameLayout_sa_style"
-        android:id="@+id/settings_frameL2">
+        android:id="@+id/settings_frameL2"
+        style="@style/FrameLayout_sa_style">
 
         <TextView
-            android:text="@string/s_app"
             style="@style/TextView_sa_style"
-            />
+            android:text="@string/s_app" />
 
         <Button
-            style="@style/Button_settings"
             android:id="@+id/btn_share"
-            app:icon="@drawable/ic_share_16x18"
+            style="@style/Button_settings"
+            android:background="@android:color/transparent"
             android:paddingStart="4dp"
-            android:paddingEnd="4dp"
             android:paddingTop="3dp"
+            android:paddingEnd="4dp"
             android:paddingBottom="3dp"
-            android:background="@android:color/transparent"
-            />
+            app:icon="@drawable/ic_share_16x18" />
 
     </FrameLayout>
 
     <FrameLayout
-        style="@style/FrameLayout_sa_style"
-        android:id="@+id/settings_frameL3">
+        android:id="@+id/settings_frameL3"
+        style="@style/FrameLayout_sa_style">
 
         <TextView
             style="@style/TextView_sa_style"
-            android:text="@string/t_support"
-            />
+            android:text="@string/t_support" />
 
         <Button
-            style="@style/Button_settings"
             android:id="@+id/btn_support"
-            app:icon="@drawable/ic_support_20x18"
-            android:paddingStart="2dp"
-            android:paddingEnd="2dp"
-            android:paddingTop="3.1dp"
-            android:paddingBottom="2.9dp"
+            style="@style/Button_settings"
             android:background="@android:color/transparent"
-            />
+            android:paddingStart="2dp"
+            android:paddingTop="3.1dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2.9dp"
+            app:icon="@drawable/ic_support_20x18" />
     </FrameLayout>
+
     <FrameLayout
-        style="@style/FrameLayout_sa_style"
-        android:id="@+id/settings_frameL4">
+        android:id="@+id/settings_frameL4"
+        style="@style/FrameLayout_sa_style">
 
         <TextView
             style="@style/TextView_sa_style"
-            android:text="@string/u_agreement"
-             />
+            android:text="@string/u_agreement" />
 
         <Button
-            style="@style/Button_settings"
             android:id="@+id/btn_user_agreement"
-            app:icon="@drawable/ic_arrow_forward_8x14"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            style="@style/Button_settings"
             android:background="@android:color/transparent"
-            />
+            android:paddingStart="8dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="5dp"
+            app:icon="@drawable/ic_arrow_forward_8x14" />
     </FrameLayout>
-
 
 
 </LinearLayout>

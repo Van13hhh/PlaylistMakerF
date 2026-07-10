@@ -5,10 +5,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.sharing.ExternalNavigator
 import com.example.playlistmaker.domain.sharing.model.SupportInfo
 
-class ExternalNavigatorImpl(private val context: Context): ExternalNavigator {
+class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
     override fun getAgreementUrl(): String {
-        return  context.getString(R.string.url_yandex)
+        return context.getString(R.string.url_yandex)
     }
 
     override fun getSupportInfo(): SupportInfo {

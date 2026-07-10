@@ -8,7 +8,10 @@ import com.example.playlistmaker.domain.sharing.SharingInteractor
 import com.example.playlistmaker.domain.sharing.model.SupportInfo
 import com.example.playlistmaker.ui.common.SingleLiveEvent
 
-class SettingsViewModel(private val settingsInteractor: SettingInteractor, private val sharingInteractor: SharingInteractor) : ViewModel(){
+class SettingsViewModel(
+    private val settingsInteractor: SettingInteractor,
+    private val sharingInteractor: SharingInteractor
+) : ViewModel() {
 
     private val _isDarkTheme = MutableLiveData<Boolean>()
     fun observeTheme(): LiveData<Boolean> = _isDarkTheme
@@ -25,18 +28,18 @@ class SettingsViewModel(private val settingsInteractor: SettingInteractor, priva
         _isDarkTheme.value = isDark
     }
 
-    fun onAgreementClick(){
-        val url =  sharingInteractor.getAgreementUrl()
+    fun onAgreementClick() {
+        val url = sharingInteractor.getAgreementUrl()
         _navigation.postValue(NavigationAction.Agreement(url))
     }
 
-    fun onSupportClick(){
+    fun onSupportClick() {
         val supportInfo = sharingInteractor.getSupportInfo()
         _navigation.postValue(NavigationAction.Support(supportInfo))
     }
 
     fun onShareClick() {
-        val url =  sharingInteractor.getShareUrl()
+        val url = sharingInteractor.getShareUrl()
         _navigation.postValue(NavigationAction.Share(url))
     }
 

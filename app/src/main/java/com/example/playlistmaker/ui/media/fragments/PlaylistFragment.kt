@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.playlistmaker.databinding.PlaylistFragmentBinding
+import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.ui.media.view_model.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
-class PlaylistFragment: Fragment() {
-    private var _binding: PlaylistFragmentBinding? = null
+class PlaylistFragment : Fragment() {
+    private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<PlaylistsViewModel>()
 
@@ -20,7 +20,7 @@ class PlaylistFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = PlaylistFragmentBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -28,7 +28,8 @@ class PlaylistFragment: Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    companion object{
+
+    companion object {
         fun newInstance() = PlaylistFragment()
     }
 }

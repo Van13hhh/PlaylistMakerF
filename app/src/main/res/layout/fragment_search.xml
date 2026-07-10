@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:theme="@style/Theme.PlaylistMaker.Search">
+    android:theme="@style/Theme.PlaylistMaker.Search"
+    tools:context=".ui.search.fragments.SearchFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,21 +21,6 @@
             android:layout_marginEnd="@dimen/indentation_24"
             android:layout_marginBottom="@dimen/indentation_4"
             tools:ignore="UselessParent">
-
-            <Button
-                android:id="@+id/back_to_main_menu_search"
-                android:layout_width="@dimen/indentation_48"
-                android:layout_height="@dimen/indentation_48"
-                android:layout_gravity="center_horizontal"
-                android:background="@android:color/transparent"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:paddingStart="@dimen/indentation_12"
-                android:paddingTop="@dimen/indentation_12"
-                android:paddingEnd="@dimen/indentation_12"
-                android:paddingBottom="@dimen/indentation_12"
-                app:icon="@drawable/ic_left_arrow_24x24"
-                app:iconTint="?attr/colorOnPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -68,11 +54,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:descendantFocusability="beforeDescendants"
             android:focusable="true"
+            android:focusableInTouchMode="true"
             android:imeOptions="actionDone"
             android:singleLine="true"
             android:textColorHighlight="@color/TakeCursorBlue"
-            android:textCursorDrawable="@drawable/cursor" />
+            android:textCursorDrawable="@drawable/cursor"
+            tools:ignore="Autofill,LabelFor" />
 
         <Button
             android:id="@+id/clearIcon"
@@ -104,7 +93,8 @@
         android:layout_marginTop="102dp"
         android:layout_marginEnd="120dp"
         android:src="?attr/internetErrorImg"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/empty_error_iv"
@@ -114,7 +104,8 @@
         android:layout_marginTop="102dp"
         android:layout_marginEnd="120dp"
         android:src="?attr/emptyErrorImg"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/tv_error"
@@ -127,7 +118,8 @@
         android:gravity="center"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="@dimen/indentation_19"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:ignore="SpUsage" />
 
     <Button
         android:id="@+id/btn_error"
@@ -138,12 +130,13 @@
         android:backgroundTint="?attr/colorOnPrimary"
         android:fontFamily="@font/ys_display_medium"
         android:letterSpacing="0"
-        android:text="Обновить"
+        android:text="@string/update"
         android:textAllCaps="false"
         android:textColor="?attr/colorPrimary"
         android:textSize="@dimen/indentation_14"
         android:visibility="gone"
-        app:cornerRadius="54sp" />
+        app:cornerRadius="54sp"
+        tools:ignore="SpUsage" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_search"
@@ -183,7 +176,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/indentation_8"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            tools:ignore="InefficientWeight" />
 
         <Button
             android:id="@+id/history_btn"

@@ -15,7 +15,8 @@ import org.koin.dsl.module
 val repositoryModule = module {
     single<TrackRepository> {
         TrackRepositoryImpl(
-            get())
+            get()
+        )
     }
 
     single<SearchHistoryRepository> {
@@ -26,7 +27,7 @@ val repositoryModule = module {
         SettingsRepositoryImpl(get(named("theme_switcher")))
     }
 
-    single<ExternalNavigator>{
+    single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
     }
 }

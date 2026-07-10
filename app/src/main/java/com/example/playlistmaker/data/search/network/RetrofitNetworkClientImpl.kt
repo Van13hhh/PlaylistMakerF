@@ -8,7 +8,10 @@ import com.example.playlistmaker.data.search.dto.TrackSearchRequest
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class RetrofitNetworkClientImpl(private val context: Context, private val itunesService: ItunesApiService): RetrofitNetworkClient {
+class RetrofitNetworkClientImpl(
+    private val context: Context,
+    private val itunesService: ItunesApiService
+) : RetrofitNetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (!isConnected()) {

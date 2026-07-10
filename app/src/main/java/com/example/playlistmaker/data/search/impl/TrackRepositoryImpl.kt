@@ -7,7 +7,7 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.search.model.TrackSearchResult
 import com.example.playlistmaker.domain.search.TrackRepository
 
-class TrackRepositoryImpl(private val networkClient: RetrofitNetworkClient): TrackRepository {
+class TrackRepositoryImpl(private val networkClient: RetrofitNetworkClient) : TrackRepository {
     override fun searchTrack(expression: String): TrackSearchResult {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
 
@@ -21,7 +21,7 @@ class TrackRepositoryImpl(private val networkClient: RetrofitNetworkClient): Tra
             }
             TrackSearchResult(tracks, 200)
         } else {
-            // Возвращаем пустой список и код ошибки (например, -1)
+
             TrackSearchResult(emptyList(), response.resultCode)
         }
     }
