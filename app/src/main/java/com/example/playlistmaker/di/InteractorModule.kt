@@ -9,12 +9,11 @@ import com.example.playlistmaker.domain.settings.impl.SettingInteractorImpl
 import com.example.playlistmaker.domain.sharing.SharingInteractor
 import com.example.playlistmaker.domain.sharing.impl.SharingInteractorImpl
 import org.koin.dsl.module
-import java.util.concurrent.Executors
 
 val interactorModule = module {
 
     single<TrackInteractor> {
-        TrackInteractorImpl(get(), get())
+        TrackInteractorImpl(get())
     }
 
     single<SearchHistoryInteractor> {

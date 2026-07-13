@@ -1,9 +1,8 @@
 package com.example.playlistmaker.util
 
+import android.annotation.SuppressLint
 import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import com.example.playlistmaker.domain.search.model.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class TrackConverter {
     fun convert(track: Track): TrackUiModel {
@@ -21,13 +20,12 @@ class TrackConverter {
         )
     }
 
+    @SuppressLint("DefaultLocale")
     private fun formatTime(timeMillis: Long): String {
-        return try {
-            SimpleDateFormat("mm:ss", Locale.getDefault())
-                .format(timeMillis)
-        } catch (_: Exception) {
-            "00:00"
-        }
+        val totalSeconds = timeMillis / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     private fun formatDate(releaseDate: String?): String {

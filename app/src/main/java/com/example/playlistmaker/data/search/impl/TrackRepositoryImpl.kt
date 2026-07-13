@@ -6,12 +6,15 @@ import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.search.model.TrackSearchResult
 import com.example.playlistmaker.domain.search.TrackRepository
+import com.example.playlistmaker.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(private val networkClient: RetrofitNetworkClient) : TrackRepository {
-    override fun searchTrack(expression: String): TrackSearchResult {
+    override fun searchTrack(expression: String): Flow<Resource<TrackSearchResult>> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
 
-        return if (response.resultCode == 200) {
+         if (response.resultCode == 200) {
             val tracks = (response as TrackSearchResponse).results.map {
                 Track(
                     it.trackName, it.artistName, it.trackTimeMillis, it.artworkUrl100,
@@ -19,10 +22,9 @@ class TrackRepositoryImpl(private val networkClient: RetrofitNetworkClient) : Tr
                     it.country, it.previewUrl
                 )
             }
-            TrackSearchResult(tracks, 200)
+            emit(Resource.Success(TrackSearchResult(tracks, 200)))
         } else {
-
-            TrackSearchResult(emptyList(), response.resultCode)
+             emit(Resource.Error("Проверьте подключение к интернету (код: ${response.resultCode})"))
         }
     }
 }
