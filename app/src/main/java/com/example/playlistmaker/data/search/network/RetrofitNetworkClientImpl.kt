@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.playlistmaker.data.search.dto.Response
 import com.example.playlistmaker.data.search.dto.TrackSearchRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -13,31 +15,27 @@ class RetrofitNetworkClientImpl(
     private val itunesService: ItunesApiService
 ) : RetrofitNetworkClient {
 
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }
 
         if (dto !is TrackSearchRequest) return Response().apply { resultCode = 400 }
 
-        return try {
-            val response = itunesService.search(dto.expression).execute()
-            val body = response.body()
-
-            if (body != null) {
-                body.apply { resultCode = response.code() }
-            } else {
-                Response().apply { resultCode = response.code() }
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = itunesService.search(dto.expression)
+                response.apply { resultCode = 200 }
+            } catch (e: SocketTimeoutException) {
+                // Таймаут соединения
+                Response().apply { resultCode = -1 }
+            } catch (e: UnknownHostException) {
+                // Нет интернета (DNS не разрешился)
+                Response().apply { resultCode = -1 }
+            } catch (e: Exception) {
+                // Любая другая сетевая ошибка
+                Response().apply { resultCode = -1 }
             }
-        } catch (e: SocketTimeoutException) {
-            // Таймаут соединения
-            Response().apply { resultCode = -1 }
-        } catch (e: UnknownHostException) {
-            // Нет интернета (DNS не разрешился)
-            Response().apply { resultCode = -1 }
-        } catch (e: Exception) {
-            // Любая другая сетевая ошибка
-            Response().apply { resultCode = -1 }
         }
     }
 

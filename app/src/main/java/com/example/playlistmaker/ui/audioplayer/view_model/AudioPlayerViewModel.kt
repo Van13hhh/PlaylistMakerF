@@ -1,21 +1,26 @@
 package com.example.playlistmaker.ui.audioplayer.view_model
 
+import android.annotation.SuppressLint
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.TrackConverter
 import com.example.playlistmaker.ui.audioplayer.TrackUiModel
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class AudioPlayerViewModel(
     private val trackConverter: TrackConverter,
-    private var mediaPlayer: MediaPlayer?
+    private val mediaPlayer: MediaPlayer
 ) : ViewModel() {
+
+    private var timerJob: Job? = null
     private val playerStateLiveData = MutableLiveData<PlayerState>(
         PlayerState.PlayingState(
             state = STATE_DEFAULT,
@@ -23,22 +28,16 @@ class AudioPlayerViewModel(
         )
     )
 
-    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
-
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val updateTimeRunnable = object : Runnable {
-        override fun run() {
-            val currentState = playerStateLiveData.value
-            if (currentState is PlayerState.PlayingState && currentState.state == STATE_PLAYING) {
-                updateProgress()  // Обновляем время
-                handler.postDelayed(this, DELAY_MILLS)  // Планируем следующий запуск
-            }
-        }
+    init {
+        Log.d("PlayerLog", "ViewModel created, mediaPlayer: ${mediaPlayer.hashCode()}")
     }
 
+    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
+
     fun resetTimer() {
-        handler.removeCallbacks(updateTimeRunnable)
+        Log.d("PlayerLog", "resetTimer called")
+        timerJob?.cancel()
+        timerJob = null
         updateState(newState = STATE_PREPARED, newTime = formatTime(0))
     }
 
@@ -46,6 +45,7 @@ class AudioPlayerViewModel(
         newState: Int? = null,
         newTime: String? = null
     ) {
+        Log.d("PlayerLog", "updateState: newState=$newState, newTime=$newTime")
         val updatedState = when (val currentState = playerStateLiveData.value) {
             is PlayerState.PlayingState -> {
                 currentState.copy(
@@ -66,35 +66,59 @@ class AudioPlayerViewModel(
     }
 
     private fun pausePlayer() {
+        Log.d("PlayerLog", "pausePlayer called, isPlaying: ${mediaPlayer.isPlaying}")
         pauseTimer()
-        mediaPlayer?.pause()
-        updateState(newState = STATE_PAUSED, newTime = formatTime(mediaPlayer?.currentPosition))
+        mediaPlayer.pause()
+        updateState(newState = STATE_PAUSED, newTime = formatTime(mediaPlayer.currentPosition))
     }
 
     private fun updateProgress() {
-        updateState(newTime = formatTime(mediaPlayer?.currentPosition))
+        Log.d("PlayerLog", "updateProgress: position=${mediaPlayer.currentPosition}")
+        updateState(newTime = formatTime(mediaPlayer.currentPosition))
     }
 
     private fun startPlayer() {
-        mediaPlayer?.start()
-        updateState(
-            newState = STATE_PLAYING,
-            newTime = formatTime(mediaPlayer?.currentPosition ?: 0)
-        )
-        startTimer()
+        Log.d("PlayerLog", "startPlayer called, isPlaying: ${mediaPlayer.isPlaying}")
+        try {
+            mediaPlayer.start()
+            updateState(
+                newState = STATE_PLAYING,
+                newTime = formatTime(mediaPlayer.currentPosition)
+            )
+            startTimer()
+        } catch (e: Exception) {
+            Log.e("PlayerLog", "startPlayer error: ${e.message}", e)
+        }
     }
 
     private fun pauseTimer() {
-        handler.removeCallbacks(updateTimeRunnable)
+        Log.d("PlayerLog", "pauseTimer called, timerJob=$timerJob")
+        timerJob?.cancel()
+        timerJob = null
     }
 
-    private fun releasePlayer() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+    private fun stopAndResetPlayer() {
+        Log.d("PlayerLog", "stopAndResetPlayer called, isPlaying: ${mediaPlayer.isPlaying}")
+        pauseTimer()
+        try {
+            if (mediaPlayer.isPlaying) {
+                Log.d("PlayerLog", "Stopping player")
+                mediaPlayer.stop()
+            }
+            Log.d("PlayerLog", "Resetting player")
+            mediaPlayer.reset()
+            Log.d("PlayerLog", "Player reset complete")
+        } catch (e: Exception) {
+            Log.e("PlayerLog", "stopAndResetPlayer error: ${e.message}", e)
+        }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun formatTime(millis: Int?): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis ?: 0)
+        val totalSeconds = (millis ?: 0) / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     sealed interface PlayerState {
@@ -109,54 +133,93 @@ class AudioPlayerViewModel(
     }
 
     fun onPlayButtonClick() {
+        Log.d("PlayerLog", "onPlayButtonClick called, currentState=${playerStateLiveData.value}")
         when (val state = playerStateLiveData.value) {
             is PlayerState.PlayingState -> {
                 when (state.state) {
-                    STATE_PLAYING -> pausePlayer()
-                    STATE_PREPARED, STATE_PAUSED -> startPlayer()
+                    STATE_PLAYING -> {
+                        Log.d("PlayerLog", "STATE_PLAYING -> pause")
+                        pausePlayer()
+                    }
+                    STATE_PREPARED, STATE_PAUSED -> {
+                        Log.d("PlayerLog", "STATE_PREPARED/PAUSED -> start")
+                        startPlayer()
+                    }
                 }
             }
 
             else -> {
+                Log.d("PlayerLog", "Other state -> start")
                 startPlayer()
             }
         }
     }
 
     fun loadTrack(track: Track) {
+        Log.d("PlayerLog", "loadTrack called: trackId=${track.trackId}, trackName=${track.trackName}")
         val trackUiModel = trackConverter.convert(track)
-        releasePlayer()
+        Log.d("PlayerLog", "Calling stopAndResetPlayer")
+        stopAndResetPlayer()
         playerStateLiveData.postValue(PlayerState.Track(trackUiModel))
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(track.previewUrl)
-            prepareAsync()
-            setOnPreparedListener {
-                playerStateLiveData.postValue(
-                    PlayerState.PlayingState(
-                        STATE_PREPARED, formatTime(0)
+        Log.d("PlayerLog", "Track posted, setting DataSource: ${track.previewUrl}")
+        try {
+            mediaPlayer.apply {
+                setDataSource(track.previewUrl)
+                Log.d("PlayerLog", "setDataSource done, calling prepareAsync")
+                prepareAsync()
+                setOnPreparedListener {
+                    Log.d("PlayerLog", "onPrepared called")
+                    playerStateLiveData.postValue(
+                        PlayerState.PlayingState(
+                            STATE_PREPARED, formatTime(0)
+                        )
                     )
-                )
-            }
-            setOnCompletionListener {
-                playerStateLiveData.postValue(
-                    PlayerState.PlayingState(
-                        STATE_PREPARED, formatTime(0)
+                }
+                setOnCompletionListener {
+                    Log.d("PlayerLog", "onCompletion called")
+                    playerStateLiveData.postValue(
+                        PlayerState.PlayingState(
+                            STATE_PREPARED, formatTime(0)
+                        )
                     )
-                )
-                resetTimer()
+                    resetTimer()
+                }
+                setOnErrorListener { _, what, extra ->
+                    Log.e("PlayerLog", "onError: what=$what, extra=$extra")
+                    true
+                }
             }
+        } catch (e: Exception) {
+            Log.e("PlayerLog", "loadTrack error: ${e.message}", e)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
+        Log.d("PlayerLog", "onCleared called")
         pauseTimer()
-        releasePlayer()
+        try {
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+            }
+            mediaPlayer.reset()
+            Log.d("PlayerLog", "Player reset in onCleared")
+        } catch (e: Exception) {
+            Log.e("PlayerLog", "onCleared error: ${e.message}", e)
+        }
     }
 
     fun startTimer() {
+        Log.d("PlayerLog", "startTimer called")
         pauseTimer()
-        handler.postDelayed(updateTimeRunnable, DELAY_MILLS)
+        timerJob = viewModelScope.launch {
+            Log.d("PlayerLog", "Timer coroutine started, isPlaying: ${mediaPlayer.isPlaying}")
+            while (mediaPlayer.isPlaying) {
+                delay(DELAY_MILLS.milliseconds)
+                updateProgress()
+            }
+            Log.d("PlayerLog", "Timer coroutine ended (isPlaying=false)")
+        }
     }
 
     companion object {
@@ -164,7 +227,6 @@ class AudioPlayerViewModel(
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
-        private const val DELAY_MILLS = 500L
+        private const val DELAY_MILLS = 300L
     }
-
 }

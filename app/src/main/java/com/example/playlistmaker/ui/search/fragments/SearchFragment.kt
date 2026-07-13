@@ -3,8 +3,6 @@ package com.example.playlistmaker.ui.search.fragments
 import android.annotation.SuppressLint
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
@@ -21,7 +20,11 @@ import com.example.playlistmaker.ui.audioplayer.fragments.AudioPlayerFragment
 import com.example.playlistmaker.ui.search.TrackAdapter
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel.TrackState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.time.Duration.Companion.milliseconds
 
 class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
@@ -29,11 +32,11 @@ class SearchFragment : Fragment() {
 
     private var value: String = EMPTY_TEXT
     private var lastSearchQuery = ""
-    private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private val viewModel by viewModel<SearchViewModel>()
     private var isReturningFromBackStack = false
     private lateinit var textWatcher: android.text.TextWatcher
+    private var searchJob: Job? = null
 
     private val searchAdapter = TrackAdapter { track ->
         onTrackClick(track)
@@ -91,7 +94,6 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -152,6 +154,7 @@ class SearchFragment : Fragment() {
             binding.edTextSearch.clearFocus()
             val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(binding.edTextSearch.windowToken, 0)
+            binding.clearIcon.isVisible = false
         }
 
         binding.historyBtn.setOnClickListener {
@@ -245,10 +248,10 @@ class SearchFragment : Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed(
-                { isClickAllowed = true },
-                TrackAdapter.CLICK_DEBOUNCE_DELAY
-            )
+            searchJob = viewLifecycleOwner.lifecycleScope.launch {
+                delay(TrackAdapter.CLICK_DEBOUNCE_DELAY.milliseconds)
+                isClickAllowed = true
+            }
         }
         return current
     }
