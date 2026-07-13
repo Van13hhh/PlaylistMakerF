@@ -5,8 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.playlistmaker.data.search.dto.Response
 import com.example.playlistmaker.data.search.dto.TrackSearchRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CancellationException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -22,21 +21,19 @@ class RetrofitNetworkClientImpl(
 
         if (dto !is TrackSearchRequest) return Response().apply { resultCode = 400 }
 
-        return withContext(Dispatchers.IO) {
-            try {
+        return try {
                 val response = itunesService.search(dto.expression)
                 response.apply { resultCode = 200 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: SocketTimeoutException) {
-                // Таймаут соединения
                 Response().apply { resultCode = -1 }
             } catch (e: UnknownHostException) {
-                // Нет интернета (DNS не разрешился)
                 Response().apply { resultCode = -1 }
             } catch (e: Exception) {
-                // Любая другая сетевая ошибка
                 Response().apply { resultCode = -1 }
             }
-        }
+
     }
 
     private fun isConnected(): Boolean {
