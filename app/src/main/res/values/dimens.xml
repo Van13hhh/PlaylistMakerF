@@ -25,4 +25,5 @@
     <dimen name="indentation_5">5dp</dimen>
     <dimen name="e_padding">8dp</dimen>
     <dimen name="regular_14">14sp</dimen>
+    <dimen name="indentation_20">20dp</dimen>
 </resources>

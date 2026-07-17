@@ -17,7 +17,6 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.getValue
 
 class AudioPlayerFragment : Fragment() {
     private var _binding: FragmentAudioPlayerBinding? = null
@@ -55,8 +54,13 @@ class AudioPlayerFragment : Fragment() {
         binding.btnPlay.setOnClickListener {
             viewModel.onPlayButtonClick()
         }
+
         binding.backToSearch.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        binding.ivLike.setOnClickListener {
+            viewModel.onFavoriteClicked(track)
         }
     }
 
@@ -64,7 +68,6 @@ class AudioPlayerFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
     private fun renderTrackInfo(model: TrackUiModel) {
         val typedValue = TypedValue()
@@ -98,9 +101,20 @@ class AudioPlayerFragment : Fragment() {
             is AudioPlayerViewModel.PlayerState.PlayingState -> {
                 renderPlayingState(state.state)
                 binding.tvTimeTrack.text = state.time
+                renderFavouriteAnimation(state.isFavorite)
             }
+            is AudioPlayerViewModel.PlayerState.Track -> {
+                renderTrackInfo(state.track)
+                renderFavouriteAnimation(state.isFavorite)
+            }
+        }
+    }
 
-            is AudioPlayerViewModel.PlayerState.Track -> renderTrackInfo(state.track)
+    private fun renderFavouriteAnimation(isFavourite: Boolean) {
+        if (isFavourite) {
+            binding.ivLike.setImageResource(R.drawable.button_red_like_51x51)
+        } else {
+            binding.ivLike.setImageResource(R.drawable.button_like_51x51)
         }
     }
 

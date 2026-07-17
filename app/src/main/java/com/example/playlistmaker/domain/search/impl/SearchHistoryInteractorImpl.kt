@@ -7,11 +7,11 @@ import com.example.playlistmaker.domain.search.SearchHistoryRepository
 class SearchHistoryInteractorImpl(
     private val searchHistoryRepository: SearchHistoryRepository
 ) : SearchHistoryInteractor {
-    override fun getHistory(): List<Track> {
+    override suspend fun getHistory(): List<Track> {
         return searchHistoryRepository.getHistory()
     }
 
-    override fun saveTrack(track: Track) {
+    override suspend fun saveTrack(track: Track) {
         searchHistoryRepository.saveTrack(track)
     }
 

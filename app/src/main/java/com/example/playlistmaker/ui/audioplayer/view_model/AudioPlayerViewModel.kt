@@ -2,13 +2,13 @@ package com.example.playlistmaker.ui.audioplayer.view_model
 
 import android.annotation.SuppressLint
 import android.media.MediaPlayer
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.player.PlayerInteractor
 import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.util.TrackConverter
+import com.example.playlistmaker.util.converters.TrackConverter
 import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,7 +17,8 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class AudioPlayerViewModel(
     private val trackConverter: TrackConverter,
-    private val mediaPlayer: MediaPlayer
+    private val mediaPlayer: MediaPlayer,
+    private val playerInteractor: PlayerInteractor
 ) : ViewModel() {
 
     private var timerJob: Job? = null
@@ -28,14 +29,9 @@ class AudioPlayerViewModel(
         )
     )
 
-    init {
-        Log.d("PlayerLog", "ViewModel created, mediaPlayer: ${mediaPlayer.hashCode()}")
-    }
-
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
     fun resetTimer() {
-        Log.d("PlayerLog", "resetTimer called")
         timerJob?.cancel()
         timerJob = null
         updateState(newState = STATE_PREPARED, newTime = formatTime(0))
@@ -45,7 +41,6 @@ class AudioPlayerViewModel(
         newState: Int? = null,
         newTime: String? = null
     ) {
-        Log.d("PlayerLog", "updateState: newState=$newState, newTime=$newTime")
         val updatedState = when (val currentState = playerStateLiveData.value) {
             is PlayerState.PlayingState -> {
                 currentState.copy(
@@ -53,7 +48,6 @@ class AudioPlayerViewModel(
                     time = newTime ?: currentState.time
                 )
             }
-
             else -> {
                 PlayerState.PlayingState(
                     state = newState ?: STATE_DEFAULT,
@@ -61,24 +55,20 @@ class AudioPlayerViewModel(
                 )
             }
         }
-
         playerStateLiveData.postValue(updatedState)
     }
 
     private fun pausePlayer() {
-        Log.d("PlayerLog", "pausePlayer called, isPlaying: ${mediaPlayer.isPlaying}")
         pauseTimer()
         mediaPlayer.pause()
         updateState(newState = STATE_PAUSED, newTime = formatTime(mediaPlayer.currentPosition))
     }
 
     private fun updateProgress() {
-        Log.d("PlayerLog", "updateProgress: position=${mediaPlayer.currentPosition}")
         updateState(newTime = formatTime(mediaPlayer.currentPosition))
     }
 
     private fun startPlayer() {
-        Log.d("PlayerLog", "startPlayer called, isPlaying: ${mediaPlayer.isPlaying}")
         try {
             mediaPlayer.start()
             updateState(
@@ -87,29 +77,24 @@ class AudioPlayerViewModel(
             )
             startTimer()
         } catch (e: Exception) {
-            Log.e("PlayerLog", "startPlayer error: ${e.message}", e)
+            e.printStackTrace()
         }
     }
 
     private fun pauseTimer() {
-        Log.d("PlayerLog", "pauseTimer called, timerJob=$timerJob")
         timerJob?.cancel()
         timerJob = null
     }
 
     private fun stopAndResetPlayer() {
-        Log.d("PlayerLog", "stopAndResetPlayer called, isPlaying: ${mediaPlayer.isPlaying}")
         pauseTimer()
         try {
             if (mediaPlayer.isPlaying) {
-                Log.d("PlayerLog", "Stopping player")
                 mediaPlayer.stop()
             }
-            Log.d("PlayerLog", "Resetting player")
             mediaPlayer.reset()
-            Log.d("PlayerLog", "Player reset complete")
         } catch (e: Exception) {
-            Log.e("PlayerLog", "stopAndResetPlayer error: ${e.message}", e)
+            e.printStackTrace()
         }
     }
 
@@ -124,101 +109,125 @@ class AudioPlayerViewModel(
     sealed interface PlayerState {
         data class PlayingState(
             val state: Int,
-            val time: String
+            val time: String,
+            val isFavorite: Boolean = false
         ) : PlayerState
 
         data class Track(
-            val track: TrackUiModel
+            val track: TrackUiModel,
+            val isFavorite: Boolean = false
         ) : PlayerState
     }
 
-    fun onPlayButtonClick() {
-        Log.d("PlayerLog", "onPlayButtonClick called, currentState=${playerStateLiveData.value}")
-        when (val state = playerStateLiveData.value) {
-            is PlayerState.PlayingState -> {
-                when (state.state) {
-                    STATE_PLAYING -> {
-                        Log.d("PlayerLog", "STATE_PLAYING -> pause")
-                        pausePlayer()
-                    }
-                    STATE_PREPARED, STATE_PAUSED -> {
-                        Log.d("PlayerLog", "STATE_PREPARED/PAUSED -> start")
-                        startPlayer()
-                    }
-                }
+    fun onFavoriteClicked(track: Track?) {
+        if (track == null) return
+
+        viewModelScope.launch {
+            track.isFavorite = !track.isFavorite
+
+            if (track.isFavorite) {
+                playerInteractor.addToFavourite(track)
+            } else {
+                playerInteractor.deleteFromFavourite(track)
             }
 
-            else -> {
-                Log.d("PlayerLog", "Other state -> start")
-                startPlayer()
+            when (val currentState = playerStateLiveData.value) {
+                is PlayerState.PlayingState -> {
+                    playerStateLiveData.postValue(
+                        currentState.copy(isFavorite = track.isFavorite)
+                    )
+                }
+                is PlayerState.Track -> {
+                    playerStateLiveData.postValue(
+                        PlayerState.Track(
+                            track = currentState.track,
+                            isFavorite = track.isFavorite
+                        )
+                    )
+                }
+                else -> {}
             }
         }
     }
 
+    fun onPlayButtonClick() {
+        when (val state = playerStateLiveData.value) {
+            is PlayerState.PlayingState -> {
+                when (state.state) {
+                    STATE_PLAYING -> pausePlayer()
+                    STATE_PREPARED, STATE_PAUSED -> startPlayer()
+                }
+            }
+            else -> startPlayer()
+        }
+    }
+
     fun loadTrack(track: Track) {
-        Log.d("PlayerLog", "loadTrack called: trackId=${track.trackId}, trackName=${track.trackName}")
         val trackUiModel = trackConverter.convert(track)
-        Log.d("PlayerLog", "Calling stopAndResetPlayer")
         stopAndResetPlayer()
-        playerStateLiveData.postValue(PlayerState.Track(trackUiModel))
-        Log.d("PlayerLog", "Track posted, setting DataSource: ${track.previewUrl}")
+
+        playerStateLiveData.postValue(
+            PlayerState.Track(
+                track = trackUiModel,
+                isFavorite = track.isFavorite
+            )
+        )
+
         try {
             mediaPlayer.apply {
                 setDataSource(track.previewUrl)
-                Log.d("PlayerLog", "setDataSource done, calling prepareAsync")
                 prepareAsync()
                 setOnPreparedListener {
-                    Log.d("PlayerLog", "onPrepared called")
                     playerStateLiveData.postValue(
                         PlayerState.PlayingState(
-                            STATE_PREPARED, formatTime(0)
+                            STATE_PREPARED,
+                            formatTime(0),
+                            isFavorite = track.isFavorite
                         )
                     )
                 }
                 setOnCompletionListener {
-                    Log.d("PlayerLog", "onCompletion called")
+                    val currentFavorite = when (val state = playerStateLiveData.value) {
+                        is PlayerState.PlayingState -> state.isFavorite
+                        is PlayerState.Track -> state.isFavorite
+                        else -> false
+                    }
                     playerStateLiveData.postValue(
                         PlayerState.PlayingState(
-                            STATE_PREPARED, formatTime(0)
+                            STATE_PREPARED,
+                            formatTime(0),
+                            isFavorite = currentFavorite
                         )
                     )
                     resetTimer()
                 }
-                setOnErrorListener { _, what, extra ->
-                    Log.e("PlayerLog", "onError: what=$what, extra=$extra")
-                    true
-                }
+                setOnErrorListener { _, _, _ -> true }
             }
         } catch (e: Exception) {
-            Log.e("PlayerLog", "loadTrack error: ${e.message}", e)
+            e.printStackTrace()
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        Log.d("PlayerLog", "onCleared called")
         pauseTimer()
         try {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
             }
             mediaPlayer.reset()
-            Log.d("PlayerLog", "Player reset in onCleared")
         } catch (e: Exception) {
-            Log.e("PlayerLog", "onCleared error: ${e.message}", e)
+            e.printStackTrace()
         }
     }
 
     fun startTimer() {
-        Log.d("PlayerLog", "startTimer called")
         pauseTimer()
         timerJob = viewModelScope.launch {
-            Log.d("PlayerLog", "Timer coroutine started, isPlaying: ${mediaPlayer.isPlaying}")
             while (mediaPlayer.isPlaying) {
                 delay(DELAY_MILLS.milliseconds)
                 updateProgress()
             }
-            Log.d("PlayerLog", "Timer coroutine ended (isPlaying=false)")
         }
     }
 

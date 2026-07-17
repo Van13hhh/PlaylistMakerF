@@ -36,10 +36,10 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnSecondary">@color/YPBlack</item>
-        <item name="placeHolderRV">@drawable/placeholder_rv_45x45_night</item>
+        <item name="placeHolderRV">@drawable/placeholder_rv_45x45</item>
         <item name="colorControlActivated">@color/YPBlue</item>
-        <item name="internetErrorImg">@drawable/internet_error_dark_120x120</item>
-        <item name="emptyErrorImg">@drawable/empty_error_dark_120x120</item>
+        <item name="internetErrorImg">@drawable/internet_error_120x120</item>
+        <item name="emptyErrorImg">@drawable/empty_error_120x120</item>
     </style>
 
     <style name="Theme.PlaylistMaker.AudioPlayer" parent="Base.Theme.PlaylistMaker">
@@ -47,9 +47,9 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/white</item>
         <item name="colorOnSecondary">@color/YPBlack</item>
-        <item name="playlistButtonSrc">@drawable/button_audioplayer_51x51night</item>
-        <item name="playlistLikeButtonSrc">@drawable/button_like_51x51_night</item>
-        <item name="playlistPlaceHolder">@drawable/placeholder_ap_312x312_night</item>
+        <item name="playlistButtonSrc">@drawable/button_audioplayer_51x51</item>
+        <item name="playlistLikeButtonSrc">@drawable/button_like_51x51</item>
+        <item name="playlistPlaceHolder">@drawable/placeholder_ap_312x312</item>
     </style>
     <style name="Theme.PlaylistMaker.Search.Text" parent="Base.Theme.PlaylistMaker">
         <item name="colorPrimary">@color/white</item>
