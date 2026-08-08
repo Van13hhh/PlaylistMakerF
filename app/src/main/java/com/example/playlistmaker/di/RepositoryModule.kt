@@ -1,9 +1,11 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.data.db.impl.PlayerRepositoryImpl
 import com.example.playlistmaker.data.search.impl.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.search.impl.TrackRepositoryImpl
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
+import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.search.SearchHistoryRepository
 import com.example.playlistmaker.domain.search.TrackRepository
 import com.example.playlistmaker.domain.settings.SettingsRepository
@@ -14,13 +16,11 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
     single<TrackRepository> {
-        TrackRepositoryImpl(
-            get()
-        )
+        TrackRepositoryImpl(get(), get())
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get(named("search_history")))
+        SearchHistoryRepositoryImpl(get(named("search_history")), get())
     }
 
     single<SettingsRepository> {
@@ -29,5 +29,9 @@ val repositoryModule = module {
 
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
+    }
+
+    single<PlayerRepository> {
+        PlayerRepositoryImpl(get(), get())
     }
 }

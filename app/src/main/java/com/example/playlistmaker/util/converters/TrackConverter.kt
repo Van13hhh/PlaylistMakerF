@@ -1,22 +1,23 @@
-package com.example.playlistmaker.util
+package com.example.playlistmaker.util.converters
 
 import android.annotation.SuppressLint
-import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 
 class TrackConverter {
     fun convert(track: Track): TrackUiModel {
         return TrackUiModel(
-            track.trackName,
-            track.artistName,
-            formatTime(track.trackTimeMillis),
-            track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"),
-            track.trackId,
-            track.collectionName,
-            formatDate(track.releaseDate),
-            track.primaryGenreName,
-            track.country,
-            track.previewUrl
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTimeMillis = formatTime(track.trackTimeMillis),
+            artworkUrl100 = track.artworkUrl100,
+            trackId = track.trackId,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl,
+            isFavorite = track.isFavorite
         )
     }
 

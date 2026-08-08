@@ -88,16 +88,20 @@ class SearchViewModel(
     }
 
     fun loadHistory() {
-        stateLiveData.postValue(
-            TrackState.History(
-                searchHistoryInteractor.getHistory()
+        viewModelScope.launch {
+            stateLiveData.postValue(
+                TrackState.History(
+                    searchHistoryInteractor.getHistory()
+                )
             )
-        )
+        }
     }
 
     fun saveTrackToHistory(track: Track) {
-        searchHistoryInteractor.saveTrack(track)
-        loadHistory()
+        viewModelScope.launch{
+            searchHistoryInteractor.saveTrack(track)
+            loadHistory()
+        }
     }
 
     fun clearHistory() {
