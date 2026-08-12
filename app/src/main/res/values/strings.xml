@@ -5,6 +5,10 @@
     <string name="my_text_lowercase">Медиатека</string>
     <string name="settings" translatable="false">"Настройки"</string>
     <string name="mediateka" translatable="false">"Медиатека"</string>
+    <string name="new_playlist" translatable="false">"Новый плейлист"</string>
+    <string name="playlist_name" translatable="false">"Название*"</string>
+    <string name="playlist_description" translatable="false">"Описание"</string>
+    <string name="create_button" translatable="false">"Создать"</string>
     <string name="Time" translatable="false">Длительность</string>
     <string name="Album" translatable="false">Альбом</string>
     <string name="media_empty_favtracks" translatable="false">Ваша медиатека пуста</string>
@@ -32,4 +36,5 @@
 
         Загрузка не удалась. Проверьте подключение к интернету"</string>
     <string name="update">Обновить</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
 </resources>

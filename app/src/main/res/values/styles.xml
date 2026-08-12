@@ -12,7 +12,7 @@
         <item name="android:layout_weight">500</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">20sp</item>
         <item name="cornerRadius">@dimen/corner_radius</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/indentation_8</item>
@@ -85,4 +85,5 @@
         <item name="android:textSize">@dimen/indentation_13</item>
         <item name="android:textColor">@color/YPGray</item>
     </style>
+
 </resources>

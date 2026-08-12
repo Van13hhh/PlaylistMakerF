@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.player.PlayerInteractor
+import com.example.playlistmaker.domain.playlist.PlaylistInteractor
+import com.example.playlistmaker.domain.playlist.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.converters.TrackConverter
 import com.example.playlistmaker.ui.audioplayer.TrackUiModel
@@ -18,7 +20,8 @@ import kotlin.time.Duration.Companion.milliseconds
 class AudioPlayerViewModel(
     private val trackConverter: TrackConverter,
     private val mediaPlayer: MediaPlayer,
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private var timerJob: Job? = null
@@ -28,6 +31,11 @@ class AudioPlayerViewModel(
             time = formatTime(0)
         )
     )
+    private val _addTrackStatus = MutableLiveData<AddTrackStatus>()
+    val addTrackStatus: LiveData<AddTrackStatus> = _addTrackStatus
+
+    private val _showBottomSheet = MutableLiveData<List<Playlist>>()
+    val showBottomSheet: LiveData<List<Playlist>> = _showBottomSheet
 
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
@@ -56,6 +64,14 @@ class AudioPlayerViewModel(
             }
         }
         playerStateLiveData.postValue(updatedState)
+    }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect { playlists ->
+                _showBottomSheet.postValue(playlists)
+            }
+        }
     }
 
     private fun pausePlayer() {
@@ -104,19 +120,6 @@ class AudioPlayerViewModel(
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
         return String.format("%02d:%02d", minutes, seconds)
-    }
-
-    sealed interface PlayerState {
-        data class PlayingState(
-            val state: Int,
-            val time: String,
-            val isFavorite: Boolean = false
-        ) : PlayerState
-
-        data class Track(
-            val track: TrackUiModel,
-            val isFavorite: Boolean = false
-        ) : PlayerState
     }
 
     fun onFavoriteClicked(track: Track?) {
@@ -192,6 +195,7 @@ class AudioPlayerViewModel(
                         is PlayerState.Track -> state.isFavorite
                         else -> false
                     }
+
                     playerStateLiveData.postValue(
                         PlayerState.PlayingState(
                             STATE_PREPARED,
@@ -229,6 +233,39 @@ class AudioPlayerViewModel(
                 updateProgress()
             }
         }
+    }
+
+    fun onPlaylistClick(playlist: Playlist, currentTrack: Track?) {
+        if (currentTrack == null) return
+
+        val trackId = currentTrack.trackId.toLong()
+
+        if (playlist.listOfTrackIds.contains(trackId)) {
+            _addTrackStatus.value = AddTrackStatus.AlreadyExists(playlist.name)
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.addTrackToPlaylist(currentTrack, playlist)
+                _addTrackStatus.value = AddTrackStatus.Success(playlist.name)
+            }
+        }
+    }
+
+    sealed interface PlayerState {
+        data class PlayingState(
+            val state: Int,
+            val time: String,
+            val isFavorite: Boolean = false
+        ) : PlayerState
+
+        data class Track(
+            val track: TrackUiModel,
+            val isFavorite: Boolean = false
+        ) : PlayerState
+    }
+
+    sealed class AddTrackStatus {
+        data class Success(val playlistName: String) : AddTrackStatus()
+        data class AlreadyExists(val playlistName: String) : AddTrackStatus()
     }
 
     companion object {

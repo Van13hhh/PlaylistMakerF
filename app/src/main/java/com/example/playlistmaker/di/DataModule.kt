@@ -10,6 +10,8 @@ import com.example.playlistmaker.data.search.network.RetrofitNetworkClientImpl
 import com.example.playlistmaker.data.search.storage.StorageClient
 import com.example.playlistmaker.data.search.storage.StorageClientImpl
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.util.converters.PlaylistDbConvertor
+import com.example.playlistmaker.util.converters.PlaylistTrackConvertor
 import com.example.playlistmaker.util.converters.TrackConverter
 import com.example.playlistmaker.util.converters.TrackDbConvertor
 import com.google.gson.Gson
@@ -24,6 +26,7 @@ import java.util.concurrent.Executors
 val dataModule = module {
 
     single { Gson() }
+
     single<Executor> { Executors.newFixedThreadPool(2) }
 
     single<RetrofitNetworkClient> {
@@ -45,6 +48,14 @@ val dataModule = module {
 
     single<TrackDbConvertor> {
         TrackDbConvertor()
+    }
+
+    single<PlaylistDbConvertor> {
+        PlaylistDbConvertor(get())
+    }
+
+    single<PlaylistTrackConvertor> {
+        PlaylistTrackConvertor()
     }
 
     single<ItunesApiService> {

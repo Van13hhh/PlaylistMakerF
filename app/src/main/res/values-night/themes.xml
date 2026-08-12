@@ -40,6 +40,7 @@
         <item name="colorControlActivated">@color/YPBlue</item>
         <item name="internetErrorImg">@drawable/internet_error_120x120</item>
         <item name="emptyErrorImg">@drawable/empty_error_120x120</item>
+        <item name="trackColor">@color/white</item>
     </style>
 
     <style name="Theme.PlaylistMaker.AudioPlayer" parent="Base.Theme.PlaylistMaker">
@@ -54,5 +55,9 @@
     <style name="Theme.PlaylistMaker.Search.Text" parent="Base.Theme.PlaylistMaker">
         <item name="colorPrimary">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="Theme.PlaylistCreating" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:textColorPrimary">@color/white</item>
     </style>
     </resources>

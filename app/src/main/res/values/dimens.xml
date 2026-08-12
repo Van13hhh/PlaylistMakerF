@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="medium22">22sp</dimen>
+    <dimen name="medium16">16sp</dimen>
     <dimen name="regular16">16sp</dimen>
     <dimen name="regular11">11sp</dimen>
     <dimen name="corner_radius">16dp</dimen>
@@ -14,6 +15,7 @@
     <dimen name="indentation_13">13dp</dimen>
     <dimen name="indentation_14">14dp</dimen>
     <dimen name="indentation_19">19dp</dimen>
+    <dimen name="text_19">19sp</dimen>
     <dimen name="indentation_48">48dp</dimen>
     <dimen name="indentation_24">24dp</dimen>
     <dimen name="indentation_44">44dp</dimen>
