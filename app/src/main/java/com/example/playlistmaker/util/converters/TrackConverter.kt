@@ -28,12 +28,4 @@ class TrackConverter {
         val seconds = totalSeconds % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
-
-    private fun formatDate(releaseDate: String?): String {
-        return try {
-            releaseDate?.take(4) ?: ""
-        } catch (_: Exception) {
-            ""
-        }
-    }
 }

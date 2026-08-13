@@ -46,6 +46,8 @@
         <item name="colorControlActivated">@color/YPBlue</item>
         <item name="internetErrorImg">@drawable/internet_error_120x120</item>
         <item name="emptyErrorImg">@drawable/empty_error_120x120</item>
+        <item name="hintTextColor">@color/edittext_hint_color</item>
+        <item name="trackColor">@color/YPTextGray</item>
     </style>
 
     <style name="Theme.PlaylistMaker.AudioPlayer" parent="Base.Theme.PlaylistMaker">
@@ -61,5 +63,9 @@
     <style name="Theme.PlaylistMaker.Search.Text" parent="Base.Theme.PlaylistMaker">
         <item name="colorPrimary">@color/black</item>
         <item name="colorOnPrimary">@color/settings_button</item>
+    </style>
+
+    <style name="Theme.PlaylistCreating" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:textColorPrimary">@color/YPBlack</item>
     </style>
 </resources>
