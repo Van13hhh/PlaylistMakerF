@@ -21,6 +21,22 @@ class TrackConverter {
         )
     }
 
+    fun convert(trackUiModel: TrackUiModel): Track {
+        return Track(
+            trackName = trackUiModel.trackName,
+            artistName = trackUiModel.artistName,
+            trackTimeMillis = trackUiModel.trackTimeMillis.toLong(),
+            artworkUrl100 = trackUiModel.artworkUrl100,
+            trackId = trackUiModel.trackId,
+            collectionName = trackUiModel.collectionName,
+            releaseDate = trackUiModel.releaseDate,
+            primaryGenreName = trackUiModel.primaryGenreName,
+            country = trackUiModel.country,
+            previewUrl = trackUiModel.previewUrl,
+            isFavorite = trackUiModel.isFavorite
+        )
+    }
+
     @SuppressLint("DefaultLocale")
     private fun formatTime(timeMillis: Long): String {
         val totalSeconds = timeMillis / 1000

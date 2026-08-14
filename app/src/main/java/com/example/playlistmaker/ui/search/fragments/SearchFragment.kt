@@ -38,13 +38,16 @@ class SearchFragment : Fragment() {
     private lateinit var textWatcher: android.text.TextWatcher
     private var searchJob: Job? = null
 
-    private val searchAdapter = TrackAdapter { track ->
-        onTrackClick(track)
-    }
-
-    private val historyAdapter = TrackAdapter { track ->
-        onTrackClick(track)
-    }
+    private val searchAdapter = TrackAdapter(
+        clickListener = { track ->
+            onTrackClick(track)
+        }
+    )
+    private val historyAdapter = TrackAdapter(
+        clickListener = { track ->
+            onTrackClick(track)
+        }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,

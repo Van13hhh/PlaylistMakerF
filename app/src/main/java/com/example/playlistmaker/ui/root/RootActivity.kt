@@ -52,6 +52,11 @@ class RootActivity : AppCompatActivity() {
                     binding.divider.isVisible = false
                 }
 
+                R.id.playlistFragment -> {
+                    bottomNavigationView.isVisible = false
+                    binding.divider.isVisible = false
+                }
+
                 else -> {
                     bottomNavigationView.isVisible = true
                     binding.divider.isVisible = true

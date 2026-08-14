@@ -1,26 +1,29 @@
 package com.example.playlistmaker.data.db.impl
 
-import com.example.playlistmaker.data.db.AppDatabase
+import com.example.playlistmaker.data.db.dao.PlaylistDao
+import com.example.playlistmaker.data.db.dao.PlaylistTracksDao
 import com.example.playlistmaker.domain.playlist.PlaylistRepository
 import com.example.playlistmaker.domain.playlist.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.audioplayer.TrackUiModel
 import com.example.playlistmaker.util.converters.PlaylistDbConvertor
 import com.example.playlistmaker.util.converters.PlaylistTrackConvertor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class PlaylistRepositoryImpl(
-    private val appDatabase: AppDatabase,
+    private val playlistDao: PlaylistDao,
+    private val playlistTracksDao: PlaylistTracksDao,
     private val playlistDbConvertor: PlaylistDbConvertor,
-    private val playlistTrackConvertor: PlaylistTrackConvertor
+    private val playlistTrackConvertor: PlaylistTrackConvertor,
 ) : PlaylistRepository {
     override suspend fun addPlaylist(playlist: Playlist) {
         val playlist = playlistDbConvertor.convert(playlist)
-        appDatabase.playlistDao().insertPlaylist(playlist)
+        playlistDao.insertPlaylist(playlist)
     }
 
-    override suspend fun getPlaylists(): Flow<List<Playlist>> {
-        return appDatabase.playlistDao().getPlaylists()
+    override fun getPlaylists(): Flow<List<Playlist>> {
+        return playlistDao.getPlaylists()
             .map { playlistEntities ->
                 playlistEntities.map { entity ->
                     playlistDbConvertor.convert(entity)
@@ -29,7 +32,7 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun getPlaylistTrackIds(playListId: Long): List<Long> {
-        val jsonString = appDatabase.playlistDao().getListWithTrackIds(playListId)
+        val jsonString = playlistDao.getListWithTrackIds(playListId)
         return playlistDbConvertor.convert(jsonString)
     }
 
@@ -38,7 +41,54 @@ class PlaylistRepositoryImpl(
             countTracks++
             listOfTrackIds.add(track.trackId.toLong())
         })
-        appDatabase.playlistDao().insertPlaylist(updatePlaylist)
-        appDatabase.PlaylistTracksDao().insertTrack(playlistTrackConvertor.map(track))
+        playlistDao.insertPlaylist(updatePlaylist)
+        playlistTracksDao.insertTrack(playlistTrackConvertor.map(track))
+    }
+
+    override suspend fun getPlaylist(id: Long): Playlist {
+        return playlistDbConvertor.convert(playlistDao.getPlaylist(id))
+    }
+
+    override fun getPlaylistTrack(listOfTracksId: List<Long>): Flow<List<TrackUiModel>> {
+        return playlistTracksDao.getTracks().map { listOfTracks ->
+            listOfTracks
+                .filter { listOfTracksId.contains(it.trackId.toLong()) }
+                .map { track ->
+                    playlistTrackConvertor.map(track)
+                }
+        }
+    }
+
+    override suspend fun deleteTrack(trackId: Long, playlistId: Long) {
+        val playlist = playlistDbConvertor.convert(playlistDao.getPlaylist(playlistId))
+
+        playlistDao.insertPlaylist(
+            playlistDbConvertor.convert(
+                playlist.apply {
+                    listOfTrackIds.remove(trackId)
+                    countTracks = listOfTrackIds.size
+                }
+            )
+        )
+        checkUnnecessaryTrack(trackId)
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        val tracksId = playlist.listOfTrackIds
+        playlistDao.deleteTrack(playlistDbConvertor.convert(playlist))
+        tracksId.map { tracksId ->
+            checkUnnecessaryTrack(tracksId)
+        }
+    }
+
+    private suspend fun checkUnnecessaryTrack(trackId: Long) {
+        val allTrackIds = playlistDao.getAllListOfTracks()
+            .flatMap { jsonString ->
+                playlistDbConvertor.convert(jsonString)
+            }
+
+        if (trackId !in allTrackIds) {
+            playlistTracksDao.deletePlaylistById(trackId)
+        }
     }
 }

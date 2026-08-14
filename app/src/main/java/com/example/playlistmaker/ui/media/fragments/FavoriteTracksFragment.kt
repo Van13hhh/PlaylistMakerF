@@ -31,9 +31,11 @@ class FavoriteTracksFragment : Fragment() {
     private var searchJob: Job? = null
 
 
-    private val favoriteTracksAdapter = TrackAdapter { track ->
-        onTrackClick(track)
-    }
+    private val favoriteTracksAdapter = TrackAdapter(
+        clickListener = { track ->
+            onTrackClick(track)
+        }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,

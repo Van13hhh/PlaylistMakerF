@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.playlist.fragments
+package com.example.playlistmaker.ui.creating_playlist.fragments
 
 import android.net.Uri
 import android.os.Bundle
@@ -11,13 +11,15 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistCreatingBinding
 import com.example.playlistmaker.domain.playlist.model.Playlist
-import com.example.playlistmaker.ui.playlist.view_model.PlaylistCreateViewModel
+import com.example.playlistmaker.ui.creating_playlist.view_model.PlaylistCreateViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -68,10 +70,10 @@ class PlaylistCreateFragment : Fragment() {
             requireContext(),
             androidx.appcompat.R.attr.colorPrimary
         )
-            .setTitle("Завершить создание плейлиста?")
-            .setMessage("Все несохраненные данные будут потеряны")
-            .setNeutralButton("Отмена") { _, _ -> }
-            .setPositiveButton("Да") { _, _ ->
+            .setTitle(R.string.end_creating_playlist)
+            .setMessage(R.string.cancel_save)
+            .setNeutralButton(R.string.cancel) { _, _ -> }
+            .setPositiveButton(R.string.yes) { _, _ ->
                 findNavController().popBackStack()
             }
 
@@ -114,12 +116,13 @@ class PlaylistCreateFragment : Fragment() {
         val name = binding.playlistName.text.toString().trim()
         val description = binding.playlistDescription.text.toString().trim()
 
-        val imagePath = photoUri?.let { saveImageToPrivateStorage(it) }
+        val photoPath = photoUri?.let { saveImageToPrivateStorage(it) }
+        Log.d("PlaylistCreate", "photoPath: $photoPath")
 
         val playlist = Playlist(
             name = name,
             description = description.takeIf { it.isNotEmpty() },
-            photoPath = imagePath,
+            photoUri = photoPath?.toUri(),
             listOfTrackIds = mutableListOf(),
             countTracks = 0
         )
@@ -131,11 +134,7 @@ class PlaylistCreateFragment : Fragment() {
     }
 
     private fun saveImageToPrivateStorage(uri: Uri): String? {
-        var inputStream: java.io.InputStream? = null
-        var outputStream: FileOutputStream? = null
-
         return try {
-            // Создаем папку
             val filePath = File(
                 requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 "myalbum"
@@ -144,29 +143,25 @@ class PlaylistCreateFragment : Fragment() {
                 filePath.mkdirs()
             }
 
-            // Генерируем уникальное имя файла
             val timestamp = System.currentTimeMillis()
             val fileName = "cover_$timestamp.jpg"
             val file = File(filePath, fileName)
 
-            inputStream = requireContext().contentResolver.openInputStream(uri)
-            outputStream = FileOutputStream(file)
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(file)
 
-            // Копируем байты напрямую для сохранения качества
-            val buffer = ByteArray(1024)
-            var length: Int
-            while (inputStream?.read(buffer).also { length = it ?: -1 } != -1) {
-                outputStream.write(buffer, 0, length)
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input?.copyTo(output)
+                }
             }
 
-            file.absolutePath // Возвращаем путь к файлу
+            Log.d("PlaylistCreate", "File saved: ${file.absolutePath}")
+            file.absolutePath
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("PlaylistCreate", "Error saving image", e)
             null
-        } finally {
-            inputStream?.close()
-            outputStream?.close()
         }
     }
 }

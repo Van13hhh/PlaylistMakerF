@@ -12,10 +12,10 @@ class AudioPlayerViewHolder(private val binding: PlaylistItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     @SuppressLint("SetTextI18n")
     fun bind(playlist: Playlist) {
-        val photoPath = playlist.photoPath
-        if (!photoPath.isNullOrEmpty()) {
+        val photoUri = playlist.photoUri
+        if (photoUri != null) {
             Glide.with(binding.root.context)
-                .load(File(photoPath))
+                .load(File(photoUri.toString()))
                 .placeholder(R.drawable.placeholder_45x45)
                 .centerCrop()
                 .into(binding.ivPlaylistPhoto)

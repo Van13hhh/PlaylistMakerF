@@ -24,7 +24,6 @@ class TrackViewHolder(
     }
 
     fun bind(track: Track) {
-        // Используем binding напрямую — всегда актуально!
         Glide.with(binding.root.context)
             .load(track.artworkUrl100)
             .placeholder(placeholderRes)

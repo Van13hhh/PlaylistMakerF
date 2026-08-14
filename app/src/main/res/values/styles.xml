@@ -86,4 +86,21 @@
         <item name="android:textColor">@color/YPGray</item>
     </style>
 
+    <style name="CustomDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/YPBlue</item>
+        <item name="backgroundTint">@android:color/white</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/YPBlue</item>
+        <item name="backgroundTint">@android:color/white</item>
+    </style>
+
 </resources>

@@ -7,7 +7,7 @@ import com.example.playlistmaker.domain.playlist.PlaylistInteractor
 import com.example.playlistmaker.domain.playlist.model.Playlist
 import kotlinx.coroutines.launch
 
-class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor) : ViewModel() {
+class ListOfPlaylistsViewModel(private val playlistInteractor: PlaylistInteractor) : ViewModel() {
     private val stateLiveData = MutableLiveData<PlaylistState>()
     fun observeState(): MutableLiveData<PlaylistState> = stateLiveData
 
