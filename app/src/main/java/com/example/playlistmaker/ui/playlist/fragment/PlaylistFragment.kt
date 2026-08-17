@@ -38,6 +38,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
+import com.google.android.material.R as MaterialR
 
 class PlaylistFragment : Fragment() {
     private var _binding: FragmentPlaylistBinding? = null
@@ -125,7 +126,7 @@ class PlaylistFragment : Fragment() {
 
         binding.btnEdit.setOnClickListener {
             val bundle = Bundle().apply {
-                putParcelable("playlist", playlist)
+                putParcelable(ARG_PLAYLIST, playlist)
             }
             findNavController().navigate(
                 R.id.action_playlistFragment_to_playlistEditFragment,
@@ -316,7 +317,7 @@ class PlaylistFragment : Fragment() {
             val blueColor = ContextCompat.getColor(requireContext(), R.color.YPBlue)
             val whiteBackground = Color.WHITE.toDrawable()
 
-            dialog.findViewById<TextView>(com.google.android.material.R.id.alertTitle)?.apply {
+            dialog.findViewById<TextView>(MaterialR.id.alertTitle)?.apply {
                 setTextColor(Color.BLACK)
             }
 
@@ -351,7 +352,7 @@ class PlaylistFragment : Fragment() {
             val blueColor = ContextCompat.getColor(requireContext(), R.color.YPBlue)
             val whiteBackground = Color.WHITE.toDrawable()
 
-            dialog.findViewById<TextView>(com.google.android.material.R.id.alertTitle)?.apply {
+            dialog.findViewById<TextView>(MaterialR.id.alertTitle)?.apply {
                 setTextColor(Color.BLACK)
             }
 
@@ -380,6 +381,7 @@ class PlaylistFragment : Fragment() {
     }
 
     companion object {
+        private const val ARG_PLAYLIST = "playlist"
         const val ARG_PLAYLIST_ID = "playlist_id"
     }
 }

@@ -10,6 +10,7 @@ import com.example.playlistmaker.util.converters.PlaylistDbConvertor
 import com.example.playlistmaker.util.converters.PlaylistTrackConvertor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 class PlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
@@ -50,13 +51,15 @@ class PlaylistRepositoryImpl(
     }
 
     override fun getPlaylistTrack(listOfTracksId: List<Long>): Flow<List<TrackUiModel>> {
-        return playlistTracksDao.getTracks().map { listOfTracks ->
-            listOfTracks
-                .filter { listOfTracksId.contains(it.trackId.toLong()) }
-                .map { track ->
-                    playlistTrackConvertor.map(track)
-                }
-        }
+        return playlistTracksDao.getTracks()
+            .map { listOfTracks ->
+                listOfTracks
+                    .filter { listOfTracksId.contains(it.trackId.toLong()) }
+                    .map { track ->
+                        playlistTrackConvertor.map(track)
+                    }
+            }
+            .distinctUntilChanged()
     }
 
     override suspend fun deleteTrack(trackId: Long, playlistId: Long) {

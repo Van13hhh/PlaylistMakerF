@@ -11,6 +11,7 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.playlist.model.Playlist
 import com.example.playlistmaker.ui.creating_playlist.fragments.PlaylistCreateFragment
 import com.example.playlistmaker.ui.playlist.view_model.PlaylistEditState
@@ -62,8 +63,8 @@ class PlaylistEditFragment : PlaylistCreateFragment() {
     }
 
     private fun setupEditMode() {
-        binding.btnCreate.text = "Сохранить"
-        binding.textView.text = "Редактировать плейлист"
+        binding.btnCreate.setText(R.string.save)
+        binding.textView.setText(R.string.edit_playlist)
     }
 
     private fun loadPlaylist() {

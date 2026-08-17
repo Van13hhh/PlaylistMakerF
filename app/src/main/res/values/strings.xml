@@ -44,6 +44,8 @@
     <string name="cancel">Отмена</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="save">Сохранить</string>
+    <string name="edit_playlist">Редактировать плейлист</string>
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="playlist_empty">Вы не создалини одного плейлиста</string>
 
