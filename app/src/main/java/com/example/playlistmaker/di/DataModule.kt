@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.playlistmaker.data.db.AppDatabase
+import com.example.playlistmaker.data.db.dao.PlaylistDao
+import com.example.playlistmaker.data.db.dao.PlaylistTracksDao
 import com.example.playlistmaker.data.search.network.ItunesApiService
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClientImpl
@@ -56,6 +58,14 @@ val dataModule = module {
 
     single<PlaylistTrackConvertor> {
         PlaylistTrackConvertor()
+    }
+
+    single<PlaylistDao> {
+        get<AppDatabase>().playlistDao()
+    }
+
+    single<PlaylistTracksDao> {
+        get<AppDatabase>().playlistTracksDao()
     }
 
     single<ItunesApiService> {

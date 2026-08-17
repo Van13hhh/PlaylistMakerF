@@ -7,7 +7,9 @@
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="corner_radius_audio">54dp</dimen>
     <dimen name="indentation_16">16dp</dimen>
+    <dimen name="indentation_sp_16">16sp</dimen>
     <dimen name="indentation_18">18dp</dimen>
+    <dimen name="indentation_sp_18">18sp</dimen>
     <dimen name="indentation_1">1dp</dimen>
     <dimen name="indentation_10">10dp</dimen>
     <dimen name="indentation_4">4dp</dimen>
@@ -18,6 +20,7 @@
     <dimen name="text_19">19sp</dimen>
     <dimen name="indentation_48">48dp</dimen>
     <dimen name="indentation_24">24dp</dimen>
+    <dimen name="indentation_sp_24">24sp</dimen>
     <dimen name="indentation_44">44dp</dimen>
     <dimen name="indentation_21">21dp</dimen>
     <dimen name="indentation_45">45dp</dimen>

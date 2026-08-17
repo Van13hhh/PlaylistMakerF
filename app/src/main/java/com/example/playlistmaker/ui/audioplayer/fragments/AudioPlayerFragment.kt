@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -30,6 +31,7 @@ class AudioPlayerFragment : Fragment() {
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback? = null
     private var currentTrack: Track? = null
 
     private val audioPlayerAdapter = AudioPlayerAdapter { playlist ->
@@ -80,10 +82,9 @@ class AudioPlayerFragment : Fragment() {
             peekHeight = (resources.displayMetrics.heightPixels * 0.5).toInt()
         }
 
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-
+        bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (_binding == null) return
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlay.apply {
@@ -91,7 +92,6 @@ class AudioPlayerFragment : Fragment() {
                             alpha = 0f
                         }
                     }
-
                     else -> {
                         binding.overlay.apply {
                             visibility = View.VISIBLE
@@ -102,9 +102,12 @@ class AudioPlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (_binding == null) return
                 binding.overlay.alpha = if (slideOffset >= 0) slideOffset else 0f
             }
-        })
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback!!)
     }
 
     private fun setupRecyclerView() {
@@ -155,12 +158,12 @@ class AudioPlayerFragment : Fragment() {
             val currentState = bottomSheetBehavior.state
             if (currentState == BottomSheetBehavior.STATE_HIDDEN) {
                 binding.overlay.apply {
-                    visibility = View.GONE
+                    isInvisible = true
                     alpha = 0f
                 }
             } else {
                 binding.overlay.apply {
-                    visibility = View.VISIBLE
+                    isInvisible = false
                     alpha = 1f
                 }
             }
@@ -251,7 +254,7 @@ class AudioPlayerFragment : Fragment() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         binding.root.postDelayed({
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            binding.overlay.visibility = View.GONE
+            binding.overlay.isInvisible = true
             binding.overlay.alpha = 0f
         }, 100)
     }
@@ -276,6 +279,12 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        bottomSheetCallback?.let { callback ->
+            if (::bottomSheetBehavior.isInitialized) {
+                bottomSheetBehavior.removeBottomSheetCallback(callback)
+            }
+        }
+        bottomSheetCallback = null
         _binding = null
     }
 

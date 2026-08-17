@@ -7,6 +7,8 @@ import com.example.playlistmaker.domain.search.model.Track
 
 class TrackAdapter(
     private val clickListener: TrackClickListener,
+    private val longClickListener: LongClickListener? = null
+
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
     var listOfTracks: MutableList<Track> = mutableListOf()
@@ -23,6 +25,10 @@ class TrackAdapter(
         holder.itemView.setOnClickListener {
             clickListener.onTrackClick(listOfTracks[position])
         }
+
+        holder.itemView.setOnLongClickListener {
+            longClickListener?.onTrackLongClick(listOfTracks[position]) ?: false
+        }
     }
 
     override fun getItemCount() = listOfTracks.size
@@ -36,5 +42,9 @@ class TrackAdapter(
 
     fun interface TrackClickListener {
         fun onTrackClick(movie: Track)
+    }
+
+    interface LongClickListener {
+        fun onTrackLongClick(track: Track): Boolean
     }
 }
