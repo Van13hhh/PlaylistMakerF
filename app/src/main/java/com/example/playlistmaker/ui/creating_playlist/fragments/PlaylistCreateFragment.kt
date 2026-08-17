@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.creating_playlist.fragments
 
+import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -25,12 +27,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
-class PlaylistCreateFragment : Fragment() {
+open class PlaylistCreateFragment : Fragment() {
     private var _binding: FragmentPlaylistCreatingBinding? = null
-    private val binding get() = _binding!!
-    private var photoUri: Uri? = null
+    val binding get() = _binding!!
+    protected var photoUri: Uri? = null
 
-    private val viewModel: PlaylistCreateViewModel by viewModel()
+    open val viewModel: PlaylistCreateViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,10 +78,30 @@ class PlaylistCreateFragment : Fragment() {
             .setPositiveButton(R.string.yes) { _, _ ->
                 findNavController().popBackStack()
             }
+            .create()
 
+        confirmDialog.setOnShowListener {
+            val blueColor = ContextCompat.getColor(requireContext(), R.color.YPBlue)
+
+            confirmDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(blueColor)
+            confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blueColor)
+        }
+
+        backButtonClick(confirmDialog)
+
+        onBtnCreateClick()
+    }
+
+    private fun onBtnCreateClick() {
+        binding.btnCreate.setOnClickListener {
+            createPlaylist()
+        }
+    }
+
+    open fun backButtonClick(confirmDialog: androidx.appcompat.app.AlertDialog?) {
         binding.backBtn.setOnClickListener {
             if (hasUnsavedChanges()) {
-                confirmDialog.show()
+                confirmDialog?.show()
             } else {
                 findNavController().popBackStack()
             }
@@ -87,14 +109,10 @@ class PlaylistCreateFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (hasUnsavedChanges()) {
-                confirmDialog.show()
+                confirmDialog?.show()
             } else {
                 findNavController().popBackStack()
             }
-        }
-
-        binding.btnCreate.setOnClickListener {
-            createPlaylist()
         }
     }
 
@@ -112,12 +130,11 @@ class PlaylistCreateFragment : Fragment() {
                 photoUri != null
     }
 
-    private fun createPlaylist() {
+    open fun createPlaylist() {
         val name = binding.playlistName.text.toString().trim()
         val description = binding.playlistDescription.text.toString().trim()
 
         val photoPath = photoUri?.let { saveImageToPrivateStorage(it) }
-        Log.d("PlaylistCreate", "photoPath: $photoPath")
 
         val playlist = Playlist(
             name = name,
@@ -126,14 +143,13 @@ class PlaylistCreateFragment : Fragment() {
             listOfTrackIds = mutableListOf(),
             countTracks = 0
         )
-
         viewModel.addPlaylist(playlist)
 
         Toast.makeText(requireContext(), "Плейлист \"$name\" создан", Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri): String? {
+    fun saveImageToPrivateStorage(uri: Uri): String? {
         return try {
             val filePath = File(
                 requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),

@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.playlist.fragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -42,6 +44,8 @@ class PlaylistFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: PlaylistViewModel by viewModel()
+
+    private var playlist: Playlist? = null
 
     private var playlistBottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var standardBottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
@@ -120,12 +124,17 @@ class PlaylistFragment : Fragment() {
         }
 
         binding.btnEdit.setOnClickListener {
-
+            val bundle = Bundle().apply {
+                putParcelable("playlist", playlist)
+            }
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_playlistEditFragment,
+                bundle
+            )
         }
 
         binding.btnDelete.setOnClickListener {
-            viewModel.deletePlaylist()
-            findNavController().popBackStack()
+            showDeletePlaylistDialog()
         }
 
         binding.btnMore.setOnClickListener {
@@ -144,10 +153,13 @@ class PlaylistFragment : Fragment() {
 
     private fun renderEvent(event: PlaylistViewModel.PlaylistEvent) {
         when (event) {
-            is PlaylistViewModel.PlaylistEvent.SharePlaylist -> renderShareScreen(
-                event.playlist,
-                event.tracks
-            )
+            is PlaylistViewModel.PlaylistEvent.SharePlaylist -> {
+                playlist = event.playlist
+                renderShareScreen(
+                    event.playlist,
+                    event.tracks
+                )
+            }
 
             is PlaylistViewModel.PlaylistEvent.ShowToast -> renderEmptyToast(event.message)
             is PlaylistViewModel.PlaylistEvent.MorePlaylist -> renderMoreScreen(event.playlist)
@@ -227,7 +239,9 @@ class PlaylistFragment : Fragment() {
         return "${playlist.name}\n${playlist.description ?: ""}\n$tracksCount\n$trackList"
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun renderPlaylist(tracks: List<TrackUiModel>, playlist: Playlist) {
+        this.playlist = playlist
         Glide.with(this)
             .load(File(playlist.photoUri.toString()))
             .placeholder(R.drawable.album_1)
@@ -301,6 +315,45 @@ class PlaylistFragment : Fragment() {
 
             val blueColor = ContextCompat.getColor(requireContext(), R.color.YPBlue)
             val whiteBackground = Color.WHITE.toDrawable()
+
+            dialog.findViewById<TextView>(com.google.android.material.R.id.alertTitle)?.apply {
+                setTextColor(Color.BLACK)
+            }
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
+                setTextColor(blueColor)
+                background = whiteBackground
+            }
+
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).apply {
+                setTextColor(blueColor)
+                background = whiteBackground
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun showDeletePlaylistDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Хотите удалить плейлист \"${playlist?.name ?: ""}\" ?")
+            .setPositiveButton("Да") { _, _ ->
+                viewModel.deletePlaylist()
+                findNavController().popBackStack()
+                playlist = null
+            }
+            .setNegativeButton("Нет", null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.window?.setBackgroundDrawable(Color.WHITE.toDrawable())
+
+            val blueColor = ContextCompat.getColor(requireContext(), R.color.YPBlue)
+            val whiteBackground = Color.WHITE.toDrawable()
+
+            dialog.findViewById<TextView>(com.google.android.material.R.id.alertTitle)?.apply {
+                setTextColor(Color.BLACK)
+            }
 
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
                 setTextColor(blueColor)
